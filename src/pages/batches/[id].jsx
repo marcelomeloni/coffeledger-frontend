@@ -10,8 +10,10 @@ import { StageTimeline } from '../../components/features/batch/StageTimeline';
 import { DynamicStageForm } from '../../components/features/batch/DynamicStageForm'; 
 import { TransferCustodyForm } from '../../components/features/batch/TransferCustodyForm';
 import { AddParticipantsModal } from '../../components/features/batch/AddParticipantsModal';
+import { ParticipantsCard } from '../../components/features/batch/ParticipantsCard'; // <-- NOVO IMPORT
 import toast from 'react-hot-toast';
 import { CheckCircle, UserPlus, History } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function BatchDetailsPage() {
   const { id } = useParams();
@@ -107,7 +109,38 @@ export default function BatchDetailsPage() {
       
       {isFinalized && (
         <div className="p-4 mb-6 text-center bg-green-100 text-green-800 rounded-lg shadow-sm mx-6">
-          Este lote foi finalizado e seu histórico é imutável.
+          <div className="flex flex-col items-center justify-center">
+            <CheckCircle className="h-8 w-8 text-green-600 mb-2" />
+            <p className="text-lg font-bold">Lote Finalizado</p>
+            <p className="text-sm text-green-700 mt-1">Este lote foi finalizado e seu histórico é imutável.</p>
+            <div className="mt-4 border-t border-green-200 pt-4 w-full space-y-2">
+              <p className="font-semibold text-green-800">
+                ID do Lote: <span className="font-normal">{batchData.details.onchain_id}</span>
+              </p>
+              <p className="font-semibold text-xs text-green-800 break-all">
+                Endereço On-chain: {" "}
+                <a
+                  href={`https://explorer.solana.com/address/${batchData.details.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-800 hover:text-green-600 underline font-normal"
+                >
+                  {batchData.details.id}
+                </a>
+              </p>
+              
+              {/* Adicione um link para a nova página personalizada aqui */}
+              <div className="pt-4">
+                <Link
+                  to={`/batch/${batchData.details.id}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-green-700 bg-green-500 px-4 py-2 text-sm font-semibold text-white shadow-md transition-colors hover:bg-green-600"
+                >
+                  <History className="h-4 w-4" />
+                  Ver Página de Proveniência Pública
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       )}
       
@@ -172,8 +205,8 @@ export default function BatchDetailsPage() {
           )}
         </div>
 
-        {/* 📱 TIMELINE COMPACTA: Lateral menor */}
-        <div className="xl:col-span-1">
+        {/* 📱 TIMELINE & PARTICIPANTS COMPACTA: Lateral menor */}
+        <div className="xl:col-span-1 space-y-6"> {/* <-- Adicionado `space-y-6` para espaçamento */}
           <div className="sticky top-6">
             <Card className="bg-white shadow-lg border border-gray-200">
               <Card.Header className="bg-gray-50 border-b border-gray-200">
@@ -189,6 +222,17 @@ export default function BatchDetailsPage() {
               </Card.Content>
             </Card>
           </div>
+          
+          {isOwner && (
+            <ParticipantsCard
+                batchId={batchData.details.id}
+                participants={batchData.details.batch_participants}
+                isOwner={isOwner}
+                onParticipantRemoved={fetchBatchDetails}
+                batchData={batchData}
+            />
+          )}
+
         </div>
       </div>
 

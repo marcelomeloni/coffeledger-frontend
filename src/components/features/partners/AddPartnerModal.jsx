@@ -12,7 +12,10 @@ const roles = [
     { value: 'grader', label: 'Classificador' },
     { value: 'roaster', label: 'Torrefador' },
     { value: 'packager', label: 'Embalador' },
-    { value: 'distributor', label: 'Distribuidor' }
+    { value: 'distributor', label: 'Distribuidor' },
+    { value: 'beneficiamento', label: 'Beneficiamento' },
+    { value: 'end_consumer', label: 'Consumidor Final / Barista' },
+    { value: 'sustainability', label: 'Sustentabilidade' }
 ];
 
 export function AddPartnerModal({ isOpen, onClose, onPartnerAdded }) {

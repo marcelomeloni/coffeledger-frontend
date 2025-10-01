@@ -8,14 +8,28 @@ const getAuthToken = () => {
 
 // Função auxiliar para tratar as respostas da API de forma padronizada.
 const handleResponse = async (response) => {
+    // First, check if the response is OK (status 200-299)
     if (response.ok) {
-        if (response.status === 204) return; // No Content
-        return response.json();
+      if (response.status === 204) return; // No Content
+      return response.json();
     } else {
-        const errorData = await response.json().catch(() => ({ message: 'Erro de comunicação com a API' }));
-        throw new Error(errorData.message || `Erro ${response.status}: ${response.statusText}`);
+      // If it's not OK, try to parse the error message from the response body
+      const errorText = await response.text();
+      let errorMessage;
+      try {
+        // Try to parse it as JSON in case the server sent a structured error
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.error || errorData.message || errorText;
+      } catch (e) {
+        // If it's not JSON, use the raw text
+        errorMessage = errorText || `Erro ${response.status}: ${response.statusText}`;
+      }
+      // Log the detailed error for debugging
+      console.error("API Error Detail:", errorMessage);
+      // Now throw an error with the detailed message
+      throw new Error(errorMessage);
     }
-};
+  };
 
 // =============================================
 // ==           FUNÇÕES DE PARCEIROS          ==
