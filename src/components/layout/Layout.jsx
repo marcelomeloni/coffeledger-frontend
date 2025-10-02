@@ -1,29 +1,54 @@
 // src/components/layout/Layout.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
-import { Header } from './Header'; // O Header agora é autossuficiente
+import { Header } from './Header';
 
 export function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detecta se está em mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Fecha sidebar ao redimensionar para desktop
+  useEffect(() => {
+    if (!isMobile && isSidebarOpen) {
+      setIsSidebarOpen(false);
+    }
+  }, [isMobile, isSidebarOpen]);
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
       <Sidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
       />
       
-      <div className="flex-1 flex flex-col">
-        {/* 1. O Header agora é um componente único e sempre visível */}
+      {/* Conteúdo Principal */}
+      <div className="flex-1 flex flex-col min-w-0"> {/* min-w-0 previne overflow */}
+        
+        {/* Header */}
         <Header onMenuClick={toggleSidebar} />
 
-        {/* 2. Conteúdo Principal */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          {children}
+        {/* Main Content */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

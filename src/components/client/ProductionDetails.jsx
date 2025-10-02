@@ -27,7 +27,7 @@ const DetailCard = ({ icon, title, value, highlight, large }) => (
 );
 
 const StatCard = ({ icon, value, label, subtitle }) => (
-  <div className="bg-gradient-to-br from-amber-900/20 to-amber-950/30 border border-amber-500/20 rounded-xl p-6 backdrop-blur-sm">
+  <div className="bg-gradient-to-br capitalize from-amber-900/20 to-amber-950/30 border border-amber-500/20 rounded-xl p-6 backdrop-blur-sm">
     <div className="flex items-center gap-3 mb-3">
       <div className="p-2 bg-amber-500/20 rounded-lg">
         {React.cloneElement(icon, { className: 'w-5 h-5 text-amber-400' })}
@@ -190,7 +190,7 @@ export const ProductionDetails = ({ producerMetadata }) => {
             {/* Essential Details */}
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
               <h3 className="text-lg font-semibold text-amber-100 mb-4 font-serif">Production Details</h3>
-              <div className="grid gap-4">
+              <div className="grid capitalize gap-4">
                 <DetailCard 
                   icon={<Calendar />} 
                   title="Harvest Season" 

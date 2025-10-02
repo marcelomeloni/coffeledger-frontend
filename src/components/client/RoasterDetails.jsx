@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { formatLabel, formatDate } from '../../lib/utils.js';
 const RoastMetric = ({ label, value, highlight }) => (
   <div className={`flex justify-between items-center p-4 rounded-xl ${
     highlight ? 'bg-orange-900/20 border border-orange-700/30' : 'bg-stone-900/30'
@@ -57,7 +57,7 @@ export const RoasterDetails = ({ roasterMetadata }) => {
           <div className="p-8 bg-gradient-to-br from-orange-950/30 to-black border border-orange-900/30 rounded-2xl">
             <h3 className="text-2xl font-bold text-orange-100 mb-6">Roast Profile</h3>
             <div className="space-y-4">
-              <RoastMetric label="Profile" value={roasterMetadata.roastProfile} highlight />
+              <RoastMetric label="Profile" value={formatLabel(roasterMetadata.roastProfile)} highlight />
               <RoastMetric label="Roast Date" value={new Date(roasterMetadata.roastDate).toLocaleDateString()} />
               <RoastMetric label="Batch Size" value={`${roasterMetadata.batchSize || '15'} kg`} />
               <RoastMetric label="Duration" value={`${roasterMetadata.duration || '12'} min`} />

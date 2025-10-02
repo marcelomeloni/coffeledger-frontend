@@ -40,7 +40,7 @@ export default function LoginPage() {
         
         {/* Cabeçalho */}
         <div className="text-center">
-          <img src="/src/assets/logo.svg" alt="CoffeLedger Logo" className="mx-auto h-12 w-auto" />
+          <img src="/src/assets/logo.png" alt="CoffeLedger Logo" className="mx-auto h-44 w-auto" />
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
             Acesse sua conta
           </h2>

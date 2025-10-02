@@ -137,13 +137,24 @@ const BatchPage = () => {
   const { details, stages } = batch;
   console.log('🎬 Rendering batch page with:', { details, stages });
 
-  // Helper para pegar metadata de cada etapa - agora baseado no partnerType
+  // Helper para pegar metadata de cada etapa - CORRIGIDO para logística
   const getStageMetadata = (partnerType) => {
     if (!stages || !Array.isArray(stages)) {
       console.log(`🔍 No stages found for ${partnerType}`);
       return null;
     }
     
+    // CASO ESPECIAL: Para logística, retornamos um ARRAY com todos os estágios de logística
+    if (partnerType === 'logistics') {
+      const logisticsStages = stages
+        .filter(s => s && s.step_name === 'logistics' && s.metadata)
+        .map(s => s.metadata);
+      
+      console.log(`🔍 Found ${logisticsStages.length} logistics stages:`, logisticsStages);
+      return logisticsStages.length > 0 ? logisticsStages : null;
+    }
+    
+    // Para outros tipos, retornamos o primeiro encontrado (comportamento original)
     const stage = stages.find((s) => s && s.step_name === partnerType);
     const result = stage?.metadata || null;
     console.log(`🔍 Stage ${partnerType} metadata:`, result ? '✅ Found' : '❌ Not found');
@@ -217,7 +228,7 @@ const BatchPage = () => {
       {/* Etapas detalhadas - agora baseadas nos partnerTypes reais */}
       {stageComponents.map(({ name, component: Component, propName }) => {
         const metadata = getStageMetadata(name);
-        console.log(`🎯 Rendering ${name}:`, metadata ? '✅' : '❌ skipping');
+        console.log(`🎯 Rendering ${name}:`, metadata ? '✅' : '❌ skipping`');
         
         if (!metadata) return null;
 

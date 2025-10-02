@@ -68,12 +68,12 @@ export const GraderDetails = ({ graderMetadata }) => {
             {graderMetadata.flavor}
           </p>
           <div className="flex flex-wrap gap-3">
-            {graderMetadata.flavor.split(',').map((note, i) => (
-              <div key={i} className="px-4 py-2 bg-amber-900/20 border border-amber-700/30 rounded-full">
-                <span className="text-amber-300 text-sm">{note.trim()}</span>
-              </div>
-            ))}
-          </div>
+  {graderMetadata.flavor && graderMetadata.flavor.split(',').map((note, i) => (
+    <div key={i} className="px-4 py-2 bg-amber-900/20 border border-amber-700/30 rounded-full">
+      <span className="text-amber-300 text-sm">{note.trim()}</span>
+    </div>
+  ))}
+</div>
           {graderMetadata.aftertaste && (
             <div className="mt-6 p-4 bg-stone-900/50 rounded-xl">
               <span className="text-stone-400 text-sm">Aftertaste: </span>

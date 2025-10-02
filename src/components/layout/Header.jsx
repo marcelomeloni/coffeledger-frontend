@@ -1,11 +1,10 @@
 // src/components/layout/Header.jsx
 import { useState, Fragment } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Menu as HeadlessMenu, Transition } from '@headlessui/react'; // Renomeado para evitar conflito
-import { ChevronDown, LogOut, UserCircle, Copy, Check, Menu } from 'lucide-react'; // Importa o ícone de Menu
+import { Menu as HeadlessMenu, Transition } from '@headlessui/react';
+import { ChevronDown, LogOut, UserCircle, Copy, Check, Menu } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-// Recebe a função para abrir/fechar a sidebar como uma prop
 export function Header({ onMenuClick }) { 
   const { publicKey, logout, isAuthenticated } = useAuth();
   const [copied, setCopied] = useState(false);
@@ -16,7 +15,7 @@ export function Header({ onMenuClick }) {
       await navigator.clipboard.writeText(publicKey.toBase58());
       toast.success("Endereço copiado!");
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reseta o ícone após 2 segundos
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       toast.error("Falha ao copiar o endereço.");
       console.error('Failed to copy text: ', err);
@@ -24,33 +23,37 @@ export function Header({ onMenuClick }) {
   };
 
   return (
-    // A classe justify-between vai alinhar o botão à esquerda e o menu de usuário à direita
-    <header className="flex-shrink-0 bg-white border-b border-gray-200 flex items-center justify-between h-20 px-4 sm:px-6 lg:px-8">
+    <header className="flex-shrink-0 bg-white border-b border-gray-200 flex items-center justify-between h-16 md:h-20 px-4 sm:px-6 lg:px-8">
       
-      {/* Botão Hambúrguer (visível apenas no mobile) */}
-      <div className="md:hidden">
+      {/* Botão Hambúrguer e Logo no Mobile */}
+      <div className="flex items-center gap-4 md:gap-6">
+        {/* Botão Hambúrguer (visível apenas no mobile) */}
         <button 
-          onClick={onMenuClick} // Usa a prop recebida
-          className="text-gray-500 hover:text-gray-700 p-2"
+          onClick={onMenuClick}
+          className="md:hidden text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          aria-label="Abrir menu"
         >
-          <Menu className="h-6 w-6" />
+          <Menu className="h-5 w-5" />
         </button>
+
+        {/* Logo no Header (apenas mobile) */}
+        <div className="md:hidden flex items-center">
+          <img src="/src/assets/logo.png" alt="CoffeLedger Logo" className="h-24 w-auto" />
+          
+        </div>
       </div>
 
-      {/* Espaçador para garantir que o menu de usuário fique à direita em telas maiores */}
-      <div className="hidden md:block"></div>
-
-      {/* Menu de Usuário (alinhado à direita) */}
+      {/* Menu de Usuário */}
       <div className="flex items-center">
         {isAuthenticated && publicKey ? (
           <HeadlessMenu as="div" className="relative">
             <div>
-              <HeadlessMenu.Button className="flex items-center gap-2 rounded-full p-2 text-sm text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                <UserCircle className="h-6 w-6" />
-                <span className="hidden sm:inline font-mono bg-gray-100 px-2 py-1 rounded">
+              <HeadlessMenu.Button className="flex items-center gap-2 rounded-lg p-2 text-sm text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                <UserCircle className="h-5 w-5 md:h-6 md:w-6" />
+                <span className="hidden xs:inline font-mono bg-gray-100 px-2 py-1 rounded text-xs md:text-sm">
                   {publicKey.toBase58().slice(0, 4)}...{publicKey.toBase58().slice(-4)}
                 </span>
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-4 w-4 hidden xs:block" />
               </HeadlessMenu.Button>
             </div>
             
@@ -63,27 +66,25 @@ export function Header({ onMenuClick }) {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <HeadlessMenu.Items className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-30">
+              <HeadlessMenu.Items className="absolute right-0 mt-2 w-72 xs:w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                 
                 {/* Seção para exibir e copiar o endereço completo */}
-                <div className="px-4 py-3">
-                  <p className="text-xs text-gray-500">Seu Endereço</p>
-                  <p className="text-sm font-mono text-gray-900 break-all">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-xs text-gray-500 mb-1">Seu Endereço</p>
+                  <p className="text-xs font-mono text-gray-900 break-all leading-relaxed">
                     {publicKey.toBase58()}
                   </p>
                 </div>
-
-                <div className="border-t border-gray-100" />
 
                 <HeadlessMenu.Item>
                   {({ active }) => (
                     <button
                       onClick={handleCopy}
-                      className={`${active ? 'bg-gray-100' : ''} group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-700`}
+                      className={`${active ? 'bg-gray-50' : ''} group flex w-full items-center px-4 py-3 text-sm text-gray-700 transition-colors`}
                     >
                       {copied 
-                        ? <Check className="mr-2 h-5 w-5 text-green-500" />
-                        : <Copy className="mr-2 h-5 w-5 text-gray-500" />
+                        ? <Check className="mr-3 h-4 w-4 text-green-500 flex-shrink-0" />
+                        : <Copy className="mr-3 h-4 w-4 text-gray-500 flex-shrink-0" />
                       }
                       {copied ? 'Copiado!' : 'Copiar Endereço'}
                     </button>
@@ -94,10 +95,10 @@ export function Header({ onMenuClick }) {
                   {({ active }) => (
                     <button
                       onClick={logout}
-                      className={`${active ? 'bg-gray-100' : ''} group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-700`}
+                      className={`${active ? 'bg-gray-50' : ''} group flex w-full items-center px-4 py-3 text-sm text-gray-700 border-t border-gray-100 transition-colors`}
                     >
-                      <LogOut className="mr-2 h-5 w-5 text-gray-500" />
-                      Sair (Logout)
+                      <LogOut className="mr-3 h-4 w-4 text-gray-500 flex-shrink-0" />
+                      Sair da Conta
                     </button>
                   )}
                 </HeadlessMenu.Item>
@@ -106,7 +107,7 @@ export function Header({ onMenuClick }) {
             </Transition>
           </HeadlessMenu>
         ) : (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 px-3 py-1 bg-gray-100 rounded-lg">
             Não autenticado
           </div>
         )}

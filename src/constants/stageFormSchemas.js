@@ -744,613 +744,467 @@ export const STAGE_FORM_SCHEMAS = {
   },
 
   packager: {
-    title: "📦 Embalagem",
-    description: "Controle do processo de embalagem e loteamento",
-    icon: "📦",
-    fields: [
+    "title": "📦 Embalagem",
+    "description": "Detalhes sobre o acondicionamento do café, garantindo frescor e qualidade até o consumidor final.",
+    "icon": "📦",
+    "fields": [
+      // Dados da Empresa e Design
       {
-        name: "packagingCompany",
-        label: "Nome da Empresa de Embalagem",
-        type: "text",
-        placeholder: "Ex: Embalagens Café Premium Ltda."
+        "name": "packagingCompany",
+        "label": "Empresa de Embalagem",
+        "type": "text",
+        "placeholder": "Ex: Embalagens Café Premium Ltda.",
+        "required": true
       },
       {
-        name: "location",
-        label: "Localização",
-        type: "text",
-        placeholder: "Ex: Rua das Indústrias, 500 - São Paulo, SP"
+        "name": "packagingImage",
+        "label": "Link da Imagem da Embalagem",
+        "type": "text",
+        "placeholder": "Ex: https://link-para-a-imagem.com/embalagem.jpg",
+        "optional": true
       },
       {
-        name: "packagingDesign",
-        label: "Design da Embalagem",
-        type: "textarea",
-        placeholder: "Ex: Edição especial, colaborativa, design personalizado"
+        "name": "packagingDesign",
+        "label": "Design e Descrição da Embalagem",
+        "type": "textarea",
+        "placeholder": "Ex: Embalagem em design 'Edição Especial', com informações de preparo e arte personalizada.",
+        "optional": true
       },
+      // Detalhes da Embalagem
       {
-        name: "producerSeal",
-        label: "Selo/Assinatura do Produtor",
-        type: "select",
-        options: [
-          { value: "yes", label: "Sim" },
-          { value: "no", label: "Não" }
+        "name": "packagingType",
+        "label": "Tipo de Embalagem",
+        "type": "select",
+        "required": true,
+        "options": [
+          { "value": "pouch_bag", "label": "Stand-up Pouch Bag" },
+          { "value": "block_bottom_bag", "label": "Block Bottom Bag" },
+          { "value": "tin_can", "label": "Lata Metálica" },
+          { "value": "degassing_valve_bag", "label": "Saco com Válvula de Degaseificação" },
+          { "value": "doypack", "label": "Doypack" },
+          { "value": "grain_pro", "label": "Saco GrainPro" }
         ]
       },
       {
-        name: "preparationMessage",
-        label: "Mensagem de Preparo",
-        type: "textarea",
-        placeholder: "Ex: Recomendado para V60, espresso, prensa francesa..."
-      },
-      {
-        name: "packagingType",
-        label: "Tipo de Embalagem",
-        type: "select",
-        options: [
-          { value: "vacuum_bag", label: "Vácuo" },
-          { value: "valve_bag", label: "Com Válvula" },
-          { value: "kraft_bag", label: "Papel Kraft" },
-          { value: "tin_can", label: "Lata" },
-          { value: "doypack", label: "Doypack" },
-          { value: "grain_pro", label: "Grain Pro" }
+        "name": "packageSize",
+        "label": "Tamanho da Embalagem",
+        "type": "select",
+        "required": true,
+        "options": [
+          { "value": "250g", "label": "250g" },
+          { "value": "500g", "label": "500g" },
+          { "value": "1kg", "label": "1kg" },
+          { "value": "2kg", "label": "2kg" },
+          { "value": "5kg", "label": "5kg" },
+          { "value": "60kg", "label": "60kg (Saco)" }
         ]
       },
       {
-        name: "packageSize",
-        label: "Tamanho da Embalagem",
-        type: "select",
-        options: [
-          { value: "250g", label: "250g" },
-          { value: "500g", label: "500g" },
-          { value: "1kg", label: "1kg" },
-          { value: "2kg", label: "2kg" },
-          { value: "5kg", label: "5kg" },
-          { value: "60kg", label: "60kg (Saco)" }
+        "name": "freshnessSeal",
+        "label": "Tecnologia de Frescor",
+        "type": "multiselect",
+        "options": [
+          { "value": "degassing_valve", "label": "Válvula de Degaseificação" },
+          { "value": "zip_seal", "label": "Zíper de Vedação (Zip-lock)" },
+          { "value": "gas_flushing", "label": "Pulsão de Gás (Flushing)" },
+          { "value": "hermetic_seal", "label": "Vedação Hermética" }
         ]
       },
       {
-        name: "weight",
-        label: "Peso Líquido (g)",
-        type: "number",
-        placeholder: "Ex: 500"
+        "name": "packagingDate",
+        "label": "Data da Embalagem",
+        "type": "date",
+        "required": true
       },
       {
-        name: "packagingDate",
-        label: "Data da Embalagem",
-        type: "date"
+        "name": "bestBeforeDate",
+        "label": "Data de Validade (Melhor antes de)",
+        "type": "date",
+        "optional": true
       },
+     
       {
-        name: "expirationDate",
-        label: "Data de Validade",
-        type: "date"
-      },
-      {
-        name: "lotNumber",
-        label: "Número do Lote",
-        type: "text",
-        placeholder: "Ex: LOTE-2025-001-BR"
-      },
-      {
-        name: "qrCode",
-        label: "Código QR Incluído",
-        type: "select",
-        options: [
-          { value: "yes", label: "Sim" },
-          { value: "no", label: "Não" }
-        ]
-      },
-      {
-        name: "gasFlushing",
-        label: "Flushing de Gás",
-        type: "select",
-        options: [
-          { value: "none", label: "Nenhum" },
-          { value: "nitrogen", label: "Nitrogênio" },
-          { value: "carbon_dioxide", label: "Dióxido de Carbono" }
-        ]
-      },
-      {
-        name: "packagingNotes",
-        label: "Observações da Embalagem",
-        type: "textarea",
-        placeholder: "Ex: Etiqueta com QR Code, instruções de preparo, loteamento específico, condições especiais..."
+        "name": "preparationMessage",
+        "label": "Recomendações de Preparo",
+        "type": "textarea",
+        "placeholder": "Ex: 'Ideal para V60, com 25g de café e 350ml de água, 92°C.'",
+        "optional": true
       }
     ]
   },
 
-  distributor: {
-    title: "🚛 Distribuidor",
-    description: "Controle da distribuição para pontos de venda",
-    icon: "🚛",
-    fields: [
-      {
-        name: "distributorName",
-        label: "Nome do Distribuidor",
-        type: "text",
-        placeholder: "Ex: Distribuidora Café Brasil Ltda."
-      },
-      {
-        name: "salesChannel",
-        label: "Canal de Venda Online/Offline",
-        type: "multiselect",
-        options: [
-          { value: "ecommerce", label: "E-commerce" },
-          { value: "coffee_shop", label: "Cafeteria" },
-          { value: "supermarket", label: "Supermercado" },
-          { value: "specialty_store", label: "Loja Especializada" },
-          { value: "wholesale", label: "Atacado" }
-        ]
-      },
-      {
-        name: "consumptionHistory",
-        label: "História de Consumo",
-        type: "textarea",
-        placeholder: "Ex: Primeira vez no mercado, edição especial, lançamento exclusivo"
-      },
-      {
-        name: "consumerTracking",
-        label: "Tracking para Consumidor Final",
-        type: "textarea",
-        placeholder: "Ex: QR Code leva à página do lote com toda a rastreabilidade"
-      },
-      {
-        name: "destinationMarket",
-        label: "Mercado de Destino",
-        type: "text",
-        placeholder: "Ex: Cafeterias em São Paulo"
-      },
-      {
-        name: "destinationAddress",
-        label: "Endereço de Destino",
-        type: "text",
-        placeholder: "Ex: Av. Paulista, 1000 - São Paulo, SP"
-      },
-      {
-        name: "destinationCoordinates",
-        label: "Coordenadas de Destino",
-        type: "group",
-        fields: [
-          {
-            name: "lat",
-            label: "Latitude",
-            type: "number",
-            step: "any",
-            placeholder: "Ex: -23.5635"
-          },
-          {
-            name: "lng",
-            label: "Longitude",
-            type: "number",
-            step: "any",
-            placeholder: "Ex: -46.6521"
-          }
-        ]
-      },
-      {
-        name: "distributionDate",
-        label: "Data de Distribuição",
-        type: "date"
-      },
-      {
-        name: "transportMode",
-        label: "Modo de Transporte",
-        type: "select",
-        options: [
-          { value: "ground", label: "Terrestre" },
-          { value: "air", label: "Aéreo" },
-          { value: "sea", label: "Marítimo" }
-        ]
-      },
-      {
-        name: "customerType",
-        label: "Tipo de Cliente",
-        type: "select",
-        options: [
-          { value: "cafe", label: "Cafeteria" },
-          { value: "restaurant", label: "Restaurante" },
-          { value: "hotel", label: "Hotel" },
-          { value: "retail", label: "Varejo" },
-          { value: "wholesale", label: "Atacado" }
-        ]
-      },
-      {
-        name: "distributionNotes",
-        label: "Observações da Distribuição",
-        type: "textarea",
-        placeholder: "Ex: Entregue refrigerado, entrega programada para cafeteria premium, condições especiais de entrega..."
-      }
-    ]
-  },
+    distributor: 
+    {
+      "title": "🚛 Distribuição e Venda",
+      "description": "Etapa final de logística que leva o café do torrador ao ponto de venda ou consumidor final.",
+      "icon": "🚛",
+      "fields": [
+        // Identificação e Dados Gerais
+        {
+          "name": "distributorName",
+          "label": "Nome da Empresa de Logística/Distribuidora",
+          "type": "text",
+          "placeholder": "Ex: Distribuidora Café Brasil Ltda."
+        },
+        {
+          "name": "distributionDate",
+          "label": "Data do Envio",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "transportMode",
+          "label": "Modo de Transporte",
+          "type": "select",
+          "options": [
+            { "value": "ground", "label": "Terrestre (Caminhão)" },
+            { "value": "air", "label": "Aéreo" },
+            { "value": "sea", "label": "Marítimo" },
+            { "value": "other", "label": "Outro" }
+          ]
+        },
+        // Detalhes da Venda
+        {
+          "name": "destinationAddress",
+          "label": "Endereço de Destino",
+          "type": "group",
+          "description": "Local de entrega do lote.",
+          "fields": [
+            {
+              "name": "street",
+              "label": "Rua e Número",
+              "type": "text",
+              "placeholder": "Ex: Rua das Flores, 123"
+            },
+            {
+              "name": "city",
+              "label": "Cidade",
+              "type": "text",
+              "placeholder": "Ex: São Paulo"
+            },
+            {
+              "name": "state",
+              "label": "Estado/Província",
+              "type": "text",
+              "placeholder": "Ex: SP"
+            },
+            {
+              "name": "country",
+              "label": "País",
+              "type": "text",
+              "placeholder": "Ex: Brasil"
+            }
+          ]
+        },
+        {
+          "name": "salesChannel",
+          "label": "Canal de Venda",
+          "description": "Onde o consumidor irá encontrar o produto.",
+          "type": "multiselect",
+          "options": [
+            { "value": "e-commerce", "label": "E-commerce" },
+            { "value": "specialty_coffee_shop", "label": "Cafeteria Especializada" },
+            { "value": "retail_store", "label": "Loja de Varejo" },
+            { "value": "supermarket", "label": "Supermercado" },
+            { "value": "horeca", "label": "HORECA (Hotéis, Restaurantes e Cafés)" }
+          ]
+        },
+        {
+          "name": "clientType",
+          "label": "Tipo de Cliente (se aplicável)",
+          "type": "select",
+          "options": [
+            { "value": "cafe", "label": "Cafeteria" },
+            { "value": "roaster", "label": "Torrefação" },
+            { "value": "wholesaler", "label": "Atacadista" },
+            { "value": "retailer", "label": "Varejista" },
+            { "value": "final_consumer", "label": "Consumidor Final" }
+          ]
+        },
+        // Rastreabilidade e Notas
+        {
+          "name": "distributionNotes",
+          "label": "Observações sobre a Distribuição",
+          "type": "textarea",
+          "placeholder": "Ex: Lote enviado em paletes selados. Entregue com temperatura controlada."
+        }
+      ]
+    },
 
-  // Novos papéis opcionais
+  
   end_consumer: {
-    title: "💡 Consumidor Final / Barista",
-    description: "Notas sobre preparo e experiência de consumo",
+    title: "Barista & Final Preparation",
+    description: "Record the brewing parameters and sensory experience",
     icon: "💡",
     fields: [
       {
-        name: "preparationNotes",
-        label: "Notas sobre Preparo",
-        type: "textarea",
-        placeholder: "Ex: Extraído no campeonato de baristas 2025, utilizado por cafeteria X, método de preparo preferido..."
+        name: "preparationMethod",
+        label: "Preparation Method",
+        type: "select",
+        placeholder: "Select the primary brew method...",
+        options: [
+          { value: "espresso", label: "Espresso" },
+          { value: "v60", label: "Hario V60" },
+          { value: "aeropress", label: "AeroPress" },
+          { value: "french_press", label: "French Press" },
+          { value: "chemex", label: "Chemex" },
+          { value: "kalita_wave", label: "Kalita Wave" },
+          { value: "cold_brew", label: "Cold Brew" },
+          { value: "batch_brew", label: "Batch Brew (Percolator)" }
+        ]
       },
       {
-        name: "extractionDetails",
-        label: "Detalhes da Extração",
-        type: "textarea",
-        placeholder: "Ex: Temperatura da água, tempo de extração, moagem, receita utilizada..."
+        name: "baristaName",
+        label: "Barista or Cafeteria Name",
+        type: "text",
+        placeholder: "e.g., Jane Doe at The Daily Grind"
       },
       {
-        name: "consumerExperience",
-        label: "Experiência do Consumidor",
-        type: "textarea",
-        placeholder: "Ex: Feedback dos clientes, notas sensoriais percebidas, combinações sugeridas..."
+        name: "grindSize",
+        label: "Grind Size",
+        type: "select",
+        placeholder: "Select grind size...",
+        options: [
+            { value: "extra_fine", label: "Extra Fine (Turkish)" },
+            { value: "fine", label: "Fine (Espresso)" },
+            { value: "medium_fine", label: "Medium-Fine (V60, AeroPress)" },
+            { value: "medium", label: "Medium (Drip, Chemex)" },
+            { value: "medium_coarse", label: "Medium-Coarse (Chemex)" },
+            { value: "coarse", label: "Coarse (French Press)" },
+            { value: "extra_coarse", label: "Extra Coarse (Cold Brew)" }
+        ]
       },
       {
-        name: "competitionUse",
-        label: "Uso em Competições",
+        name: "doseIn",
+        label: "Dose (grams)",
+        type: "number",
+        placeholder: "e.g., 18.5"
+      },
+      {
+        name: "doseOut",
+        label: "Yield (grams)",
+        type: "number",
+        placeholder: "e.g., 38"
+      },
+      {
+        name: "extractionTime",
+        label: "Extraction Time (seconds)",
+        type: "number",
+        placeholder: "e.g., 28"
+      },
+      {
+        name: "waterTemperature",
+        label: "Water Temperature (°C)",
+        type: "number",
+        placeholder: "e.g., 94"
+      },
+      {
+        name: "tastingNotes",
+        label: "Perceived Tasting Notes",
+        type: "multiselect",
+        placeholder: "Select perceived notes...",
+        options: [
+          { value: "floral", label: "Floral" },
+          { value: "fruity", label: "Fruity" },
+          { value: "citrus", label: "Citrus" },
+          { value: "chocolate", label: "Chocolate" },
+          { value: "caramel", label: "Caramel" },
+          { value: "nutty", label: "Nutty" },
+          { value: "spicy", label: "Spicy" },
+          { value: "winy", label: "Winy / Alcoholic" },
+          { value: "herbaceous", label: "Herbaceous" }
+        ]
+      },
+      {
+        name: "consumerFeedback",
+        label: "General Notes & Consumer Feedback",
         type: "textarea",
-        placeholder: "Ex: Utilizado no Campeonato Brasileiro de Baristas 2025, premiado como melhor espresso..."
+        placeholder: "e.g., Used in the 2025 Barista Championship, customers noted high sweetness..."
       }
     ]
   },
 
   sustainability: {
-    title: "🌿 Sustentabilidade",
-    description: "Impacto ambiental e social do lote",
+    title: "🌿 Sustainability & Social Impact",
+    description: "Environmental and social practices of the batch",
     icon: "🌿",
     fields: [
       {
-        name: "carbonFootprint",
-        label: "Pegada de Carbono do Lote",
-        type: "number",
-        placeholder: "Ex: 2.5 (kg CO2 por kg de café)"
-      },
-      {
-        name: "renewableEnergy",
-        label: "Uso de Energia Renovável",
-        type: "textarea",
-        placeholder: "Ex: Torrefação com energia solar, transporte com biodiesel..."
-      },
-      {
-        name: "socialImpact",
-        label: "Impacto Social na Comunidade Produtora",
-        type: "textarea",
-        placeholder: "Ex: Projetos sociais apoiados, condições de trabalho, benefícios para comunidade local..."
-      },
-      {
-        name: "waterUsage",
-        label: "Uso de Água e Eficiência Hídrica",
-        type: "textarea",
-        placeholder: "Ex: Sistema de reuso de água, processamento com baixo consumo hídrico..."
-      },
-      {
-        name: "biodiversity",
-        label: "Biodiversidade e Conservação",
-        type: "textarea",
-        placeholder: "Ex: Áreas de preservação, corredores ecológicos, espécies nativas conservadas..."
-      },
-      {
         name: "certifications",
-        label: "Certificações de Sustentabilidade",
+        label: "Sustainability Certifications",
         type: "multiselect",
         options: [
-          { value: "carbon_neutral", label: "Carbono Neutro" },
+          { value: "carbon_neutral", label: "Carbon Neutral" },
           { value: "b_corp", label: "B Corp" },
           { value: "rainforest_alliance", label: "Rainforest Alliance" },
           { value: "fair_trade", label: "Fair Trade" },
-          { value: "organic", label: "Orgânico" },
+          { value: "organic", label: "Organic" },
           { value: "bird_friendly", label: "Bird Friendly" }
         ]
+      },
+      {
+          name: "carbonFootprint",
+          label: "Carbon Footprint (kg CO₂ per kg)",
+          type: "number",
+          placeholder: "e.g., 2.5"
+      },
+      {
+        name: "waterManagement",
+        label: "Water Management",
+        type: "select",
+        placeholder: "Select the primary water practice...",
+        options: [
+          { value: "low_consumption", label: "Low Consumption (Natural/Honey Process)" },
+          { value: "recirculation_system", label: "Recirculation/Reuse System" },
+          { value: "efficient_irrigation", label: "Efficient Irrigation" },
+          { value: "standard_washed", label: "Standard Washed Process" }
+        ]
+      },
+      {
+          name: "biodiversityPractices",
+          label: "Biodiversity Practices",
+          type: "multiselect",
+          options: [
+            { value: "shade_grown", label: "Shade-Grown" },
+            { value: "native_species_corridors", label: "Native Species Corridors" },
+            { value: "reforestation_projects", label: "Reforestation Projects" },
+            { value: "organic_soil_management", label: "Organic Soil Management" },
+            { value: "wildlife_protection", label: "Wildlife Protection Areas" }
+          ]
+      },
+      {
+          name: "renewableEnergyPractices",
+          label: "Renewable Energy Usage",
+          type: "multiselect",
+          options: [
+              { value: "solar_processing", label: "Solar (Processing)" },
+              { value: "solar_roasting", label: "Solar (Roasting)" },
+              { value: "biofuel_transport", label: "Biofuel (Transport)" },
+              { value: "biomass_energy", label: "Biomass Energy" }
+          ]
+      },
+      {
+        name: "socialImpact",
+        label: "Social Impact Initiatives",
+        type: "textarea",
+        placeholder: "Describe community projects, fair labor conditions, worker benefits, etc."
       }
     ]
   },
   beneficiamento: {
-    title: "Beneficiamento / Dry Mill",
-    description: "Registro detalhado do processo de beneficiamento: descascamento, beneficiamento seco, peneiramento, separação por densidade, polimento, sorting e formação de lote final (café verde).",
-    icon: "⚙️",
-    fields: [
+    "title": "Beneficiamento / Dry Mill",
+    "description": "Etapa de processamento do café cereja ou pergaminho, onde ele é limpo, classificado e preparado para o próximo passo na cadeia.",
+    "icon": "⚙️",
+    "fields": [
+      // Dados de Entrada/Saída
       {
-        name: "millingFacilityName",
-        label: "Nome da Unidade de Beneficiamento",
-        type: "text",
-        required: true,
-        placeholder: "Ex: Beneficiamento São Pedro"
+        "name": "millingFacilityName",
+        "label": "Nome da Unidade de Beneficiamento",
+        "type": "text",
+        "required": true,
+        "placeholder": "Ex: Beneficiamento Serra Azul"
       },
       {
-        name: "facilityLocation",
-        label: "Endereço da Unidade",
-        type: "text",
-        placeholder: "Ex: Rod. BR-101, Km 120 - Zona Industrial"
+        "name": "operationDate",
+        "label": "Data do Beneficiamento",
+        "type": "date",
+        "required": true
       },
       {
-        name: "facilityCoordinates",
-        label: "Coordenadas da Unidade",
-        type: "group",
-        fields: [
-          { name: "lat", label: "Latitude", type: "number", step: "any", placeholder: "Ex: -22.9201" },
-          { name: "lng", label: "Longitude", type: "number", step: "any", placeholder: "Ex: -46.7652" }
+        "name": "incomingWeightKg",
+        "label": "Peso de Entrada (kg)",
+        "type": "number",
+        "required": true,
+        "placeholder": "Ex: 1500"
+      },
+      {
+        "name": "finalGreenWeightKg",
+        "label": "Peso Final Café Verde (kg)",
+        "type": "number",
+        "required": true,
+        "placeholder": "Ex: 1250"
+      },
+      {
+        "name": "moistureAfterProcessing",
+        "label": "Umidade Final (%)",
+        "type": "number",
+        "step": 0.1,
+        "required": true,
+        "placeholder": "Ex: 11.5"
+      },
+  
+      // Detalhes da Qualidade e Classificação
+      {
+        "name": "processingSteps",
+        "label": "Etapas de Classificação Executadas",
+        "type": "multiselect",
+        "options": [
+          { "value": "hulling", "label": "Descascamento" },
+          { "value": "sieving", "label": "Peneiramento" },
+          { "value": "density_separation", "label": "Separação por Densidade" },
+          { "value": "color_sorting", "label": "Classificação por Cor" }
         ]
       },
       {
-        name: "operatorName",
-        label: "Operador / Responsável",
-        type: "text",
-        placeholder: "Ex: Carlos Alberto"
-      },
-      {
-        name: "operationDate",
-        label: "Data do Beneficiamento",
-        type: "date",
-        required: true
-      },
-
-      // entrada e material
-      {
-        name: "incomingMaterial",
-        label: "Material de Entrada",
-        type: "select",
-        required: true,
-        options: [
-          { value: "pergaminho", label: "Pergaminho" },
-          { value: "cereja", label: "Cereja" },
-          { value: "pulped_wet", label: "Pulpado Molhado" },
-          { value: "other", label: "Outro" }
+        "name": "mainSieveSize",
+        "label": "Tamanho da Peneira Principal",
+        "description": "Tamanho do grão que corresponde à maior parte do lote.",
+        "type": "select",
+        "options": [
+          { "value": "18+", "label": "Peneira 18+" },
+          { "value": "17/18", "label": "Peneira 17/18" },
+          { "value": "16/17", "label": "Peneira 16/17" },
+          { "value": "15/16", "label": "Peneira 15/16" },
+          { "value": "14/15", "label": "Peneira 14/15" }
         ]
       },
       {
-        name: "incomingWeightKg",
-        label: "Peso de Entrada (kg)",
-        type: "number",
-        required: true,
-        placeholder: "Ex: 1000"
-      },
-      {
-        name: "incomingMoisture",
-        label: "Umidade de Entrada (%)",
-        type: "number",
-        step: 0.1,
-        placeholder: "Ex: 12.5"
-      },
-      {
-        name: "initialQualityNotes",
-        label: "Observações Iniciais da Qualidade",
-        type: "textarea",
-        placeholder: "Ex: Presença de casca, características visuais do pergaminho, cheiro fermentado..."
-      },
-
-      // passos do processo
-      {
-        name: "processingSteps",
-        label: "Etapas Executadas",
-        type: "multiselect",
-        options: [
-          { value: "dehulling", label: "Descascamento / Descasca" },
-          { value: "hulling", label: "Hulling (remoção do pergaminho)" },
-          { value: "polishing", label: "Polimento" },
-          { value: "sieving", label: "Peneiramento / Classificação por tamanho" },
-          { value: "density_separation", label: "Separação por Densidade" },
-          { value: "color_sorting", label: "Classificação por Cor (Color Sorter)" },
-          { value: "destoning", label: "Despedregamento (Destoner)" },
-          { value: "drying", label: "Secagem / Ajuste de Umidade" },
-          { value: "bagging", label: "Embalo / Enchimento de Sacos" },
-          { value: "fumigation", label: "Fumigação / Tratamento Fitossanitário" }
+        "name": "defectTypes",
+        "label": "Principais Defeitos Encontrados",
+        "description": "Tipos de grãos defeituosos que afetam a qualidade do lote.",
+        "type": "multiselect",
+        "options": [
+          { "value": "black", "label": "Pretos" },
+          { "value": "sour", "label": "Verdes / Ardidos" },
+          { "value": "broken", "label": "Quebrados" },
+          { "value": "insect_damage", "label": "Dano por Inseto" },
+          { "value": "immature", "label": "Imaturos" },
+          { "value": "foreign_material", "label": "Material Estranho" }
         ]
       },
-
-      // máquinas / parâmetros
+  
+      // Armazenamento
       {
-        name: "machineSettings",
-        label: "Equipamentos e Parâmetros",
-        type: "group",
-        fields: [
-          { name: "hullerModel", label: "Modelo da Descascadora / Huller", type: "text", placeholder: "Ex: Huller X-2000" },
-          { name: "hullerSettings", label: "Configurações da Huller (RPM / abertura)", type: "text", placeholder: "Ex: RPM 1200, abertura 2.3 mm" },
-          { name: "polisherModel", label: "Modelo do Polidor", type: "text", placeholder: "Ex: Polisher P-90" },
-          { name: "colorSorterModel", label: "Modelo do Color Sorter (se usado)", type: "text", placeholder: "Ex: Sorter Z-300" },
-          { name: "dryerModel", label: "Secador / Método de Secagem", type: "text", placeholder: "Ex: Secador contínuo T-500" }
-        ]
-      },
-
-      // secagem
-      {
-        name: "dryingMethod",
-        label: "Método de Secagem",
-        type: "select",
-        options: [
-          { value: "sun", label: "Sol / Terreiro" },
-          { value: "raised_beds", label: "Drying beds (terreiros elevados)" },
-          { value: "mechanical", label: "Secador Mecânico / Contínuo" },
-          { value: "tunnel", label: "Túnel / Estufa" },
-          { value: "solar", label: "Secador Solar" }
+        "name": "storageType",
+        "label": "Tipo de Embalagem para Armazenamento",
+        "type": "select",
+        "required": true,
+        "options": [
+          { "value": "jute_bag", "label": "Saco de Juta Tradicional" },
+          { "value": "grain_pro", "label": "Saco Hermético (GrainPro)" },
+          { "value": "big_bag", "label": "Big Bag (a granel)" },
+          { "value": "other", "label": "Outro" }
         ]
       },
       {
-        name: "dryingParameters",
-        label: "Parâmetros de Secagem",
-        type: "group",
-        fields: [
-          { name: "dryingStartMoisture", label: "Umidade Inicial (%)", type: "number", step: 0.1, placeholder: "Ex: 20.0" },
-          { name: "dryingEndMoisture", label: "Umidade Final (%)", type: "number", step: 0.1, placeholder: "Ex: 11.5" },
-          { name: "dryingTempC", label: "Temperatura Média (°C)", type: "number", placeholder: "Ex: 45" },
-          { name: "dryingDurationHours", label: "Duração da Secagem (h)", type: "number", placeholder: "Ex: 48" }
-        ]
+        "name": "storageNotes",
+        "label": "Observações sobre Armazenamento",
+        "type": "textarea",
+        "placeholder": "Ex: Lote armazenado em ambiente com controle de umidade."
       },
-
-      // peneira / distribuição por tamanhos
+  
+      // Rastreabilidade e Notas
       {
-        name: "sievingProfile",
-        label: "Perfil de Peneiramento (percentual retido por peneira)",
-        type: "group",
-        fields: [
-          { name: "sieve18PlusPct", label: "18+ (%)", type: "number", step: 0.1, placeholder: "Ex: 12.5" },
-          { name: "sieve17Pct", label: "17 (%)", type: "number", step: 0.1, placeholder: "Ex: 30.0" },
-          { name: "sieve16Pct", label: "16 (%)", type: "number", step: 0.1, placeholder: "Ex: 25.0" },
-          { name: "sieve15Pct", label: "15 (%)", type: "number", step: 0.1, placeholder: "Ex: 20.0" },
-          { name: "finesPct", label: "Finos / abaixo (%)", type: "number", step: 0.1, placeholder: "Ex: 12.5" }
-        ]
-      },
-
-      // densidade e separação
-      {
-        name: "densitySeparation",
-        label: "Separação por Densidade",
-        type: "group",
-        fields: [
-          { name: "method", label: "Método", type: "select", options: [
-            { value: "gravity_table", label: "Mesa de Gravidade" },
-            { value: "water_table", label: "Mesa de Água" },
-            { value: "densimeter", label: "Densímetro / Flutuador" },
-            { value: "other", label: "Outro" }
-          ]},
-          { name: "densityThreshold", label: "Limite de Densidade (g/L)", type: "number", placeholder: "Ex: 700" },
-          { name: "highDensityPct", label: "% de grãos alta densidade", type: "number", step: 0.1, placeholder: "Ex: 35.0" }
-        ]
-      },
-
-      // defeitos
-      {
-        name: "defectDistribution",
-        label: "Contagem / Distribuição de Defeitos",
-        type: "group",
-        fields: [
-          { name: "primaryDefectsCount", label: "Defeitos Primários (count)", type: "number", placeholder: "Ex: 3" },
-          { name: "secondaryDefectsCount", label: "Defeitos Secundários (count)", type: "number", placeholder: "Ex: 12" },
-          { name: "defectivePercentage", label: "Percentual Total de Defeitos (%)", type: "number", step: 0.1, placeholder: "Ex: 1.5" },
-          { name: "defectTypes", label: "Tipos de Defeitos (marque)", type: "multiselect", options: [
-            { value: "black_bean", label: "Preto" },
-            { value: "insect_damage", label: "Dano de Inseto" },
-            { value: "broken", label: "Quebrados" },
-            { value: "fermented", label: "Fermentado" },
-            { value: "mold", label: "Mofo" },
-            { value: "foreign_material", label: "Material Estranho" }
-          ]}
-        ]
-      },
-
-      // resultados e rendimento
-      {
-        name: "moistureAfterProcessing",
-        label: "Umidade Após Beneficiamento (%)",
-        type: "number",
-        step: 0.1,
-        placeholder: "Ex: 11.2"
+        "name": "isMicrolot",
+        "label": "Este Lote é um Microlote?",
+        "type": "select",
+        "options": [{ "value": "yes", "label": "Sim" }, { "value": "no", "label": "Não" }]
       },
       {
-        name: "finalGreenWeightKg",
-        label: "Peso Final Café Verde (kg)",
-        type: "number",
-        required: true,
-        placeholder: "Ex: 720"
-      },
-      {
-        name: "yieldPercentage",
-        label: "Rendimento (%) (peso final / peso inicial)",
-        type: "number",
-        step: 0.1,
-        placeholder: "Ex: 72.0"
-      },
-
-      // lotes e microlotes
-      {
-        name: "internalLotNumber",
-        label: "Número do Lote Interno (unidade de beneficiamento)",
-        type: "text",
-        required: true,
-        placeholder: "Ex: BNF-2025-001"
-      },
-      {
-        name: "isMicrolot",
-        label: "É Microlote?",
-        type: "select",
-        options: [{ value: "yes", label: "Sim" }, { value: "no", label: "Não" }]
-      },
-      {
-        name: "microlotId",
-        label: "ID do Microlote (se aplicável)",
-        type: "text",
-        placeholder: "Ex: MICRO-001"
-      },
-
-      // amostragem e laudos
-      {
-        name: "sampleForCupping",
-        label: "Amostra para Cupping",
-        type: "group",
-        fields: [
-          { name: "sampleId", label: "ID da Amostra", type: "text", placeholder: "Ex: SAMP-2025-01" },
-          { name: "sampleDate", label: "Data da Amostragem", type: "date" },
-          { name: "sampleWeightGr", label: "Peso da Amostra (g)", type: "number", placeholder: "Ex: 300" },
-          { name: "sampleRoastProfile", label: "Perfil de Torra de Amostra", type: "text", placeholder: "Ex: 210°C - 12min" },
-          { name: "sampleRoaster", label: "Nome do Torrador da Amostra", type: "text", placeholder: "Ex: Teste - Torrefação X" }
-        ]
-      },
-      {
-        name: "labTests",
-        label: "Testes Laboratoriais / Laudos",
-        type: "group",
-        fields: [
-          { name: "ochratoxinA_ppb", label: "Ochratoxina A (ppb)", type: "number", step: 0.01, placeholder: "Ex: 2.1" },
-          { name: "pesticideScreen", label: "Triagem de Pesticidas (pass/fail)", type: "select", options: [{ value: "pass", label: "Aprovado" }, { value: "fail", label: "Não Aprovado" }, { value: "n/a", label: "Não testado" }] },
-          { name: "microbialResult", label: "Resultado Microbiológico", type: "text", placeholder: "Ex: <100 cfu/g" },
-          { name: "labReportFile", label: "Arquivo do Laudo (PDF)", type: "file" },
-          { name: "labReportHash", label: "Hash do Laudo / Certificado (opcional)", type: "text", placeholder: "Ex: Qm..." }
-        ]
-      },
-
-      // fotos, documentos e rastreabilidade
-      {
-        name: "photos",
-        label: "Fotos do Lote / Processo",
-        type: "file",
-        placeholder: "Enviar imagens do pergaminho, maquinário, sacaria..."
-      },
-      {
-        name: "documents",
-        label: "Documentos (faturamento, fitossanitário, notas fiscais)",
-        type: "file"
-      },
-      {
-        name: "traceabilityHash",
-        label: "Hash de Rastreabilidade / Blockchain",
-        type: "text",
-        placeholder: "Ex: 0xabc123..."
-      },
-
-      // QC e armazenamento pós-processo
-      {
-        name: "qc",
-        label: "Controle de Qualidade (assinatura)",
-        type: "group",
-        fields: [
-          { name: "qcOfficerName", label: "Responsável QC", type: "text", placeholder: "Ex: Ana Paula" },
-          { name: "qcDate", label: "Data do Controle", type: "date" },
-          { name: "qcNotes", label: "Observações QC", type: "textarea", placeholder: "Ex: Lote aprovado para torra" }
-        ]
-      },
-      {
-        name: "storageAfterProcessing",
-        label: "Armazenamento Após Beneficiamento",
-        type: "group",
-        fields: [
-          { name: "storageType", label: "Tipo de Armazenamento", type: "select", options: [
-            { value: "silo", label: "Silo" },
-            { value: "big_bag", label: "Big Bag" },
-            { value: "jute_bag", label: "Saco de Juta" },
-            { value: "grain_pro", label: "GrainPro" }
-          ]},
-          { name: "storageTemperatureC", label: "Temperatura (°C)", type: "number", placeholder: "Ex: 20" },
-          { name: "storageHumidityPct", label: "Umidade Relativa (%)", type: "number", placeholder: "Ex: 60" },
-          { name: "storageEntryDate", label: "Data Entrada Armazenagem", type: "date" },
-          { name: "storageDurationDays", label: "Tempo de Armazenagem (dias)", type: "number", placeholder: "Ex: 30" }
-        ]
-      },
-
-      // observações finais
-      {
-        name: "beneficiamentoNotes",
-        label: "Observações Finais",
-        type: "textarea",
-        placeholder: "Ex: Observações sobre lotes separados, particularidades do processamento..."
+        "name": "beneficiamentoNotes",
+        "label": "Observações Finais sobre o Lote",
+        "type": "textarea",
+        "placeholder": "Ex: Este lote foi separado por seu perfil sensorial único. "
       }
     ]
   },

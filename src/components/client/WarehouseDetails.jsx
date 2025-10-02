@@ -1,6 +1,6 @@
 import React from 'react';
 import { ThermometerSun, Droplets, Clock } from 'lucide-react';
-
+import { formatLabel } from '../../lib/utils.js';
 const StorageMetric = ({ icon, label, value, unit, highlight }) => (
   <div className={`p-6 rounded-2xl border transition-all hover:scale-105 ${
     highlight 
@@ -71,7 +71,7 @@ export const WarehouseDetails = ({ warehouseMetadata }) => {
           <div className="p-8 bg-slate-950/50 border border-slate-800/50 rounded-2xl">
             <h3 className="text-2xl font-bold text-slate-100 mb-4">Storage Details</h3>
             <div className="space-y-3">
-              <InfoRow label="Type" value={warehouseMetadata.storageType} />
+              <InfoRow label="Type" value={formatLabel(warehouseMetadata.storageType)} />
               <InfoRow label="Capacity" value={warehouseMetadata.storageCapacity} />
               <InfoRow label="Entry Date" value={new Date(warehouseMetadata.stockEntryDate).toLocaleDateString('en-US')} />
               {warehouseMetadata.stockExitDate && (
@@ -83,7 +83,7 @@ export const WarehouseDetails = ({ warehouseMetadata }) => {
           <div className="p-8 bg-slate-950/50 border border-slate-800/50 rounded-2xl">
             <h3 className="text-2xl font-bold text-slate-100 mb-4">Quality Control</h3>
             <div className="space-y-3">
-              <InfoRow label="Pest Control" value={warehouseMetadata.pestControl} />
+              <InfoRow label="Pest Control" value={formatLabel(warehouseMetadata.pestControl)} />
               <InfoRow label="Last Inspection" value={new Date(warehouseMetadata.inspectionDate).toLocaleDateString('en-US')} />
             </div>
             {warehouseMetadata.warehouseNotes && (

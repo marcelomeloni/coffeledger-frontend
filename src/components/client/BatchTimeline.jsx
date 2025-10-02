@@ -1,6 +1,6 @@
 import React from 'react';
 import { Coffee, Warehouse, Eye, CheckCircle, Flame, Package, Truck, Users, Leaf } from 'lucide-react';
-
+import { formatLabel, formatDate } from '../../lib/utils.js';
 // Função para detectar o tipo de etapa baseado nos metadados
 const detectStageType = (metadata) => {
   if (!metadata || typeof metadata !== 'object') {
@@ -220,7 +220,7 @@ export const BatchTimeline = ({ stages }) => {
                         <div>SCA Score: {stage.metadata.scaScore}</div>
                       )}
                       {stage.processedStageType === 'roaster' && stage.metadata.roastProfile && (
-                        <div>Roast: {stage.metadata.roastProfile}</div>
+                        <div>Roast: {formatLabel(stage.metadata.roastProfile)}</div>
                       )}
                       {stage.processedStageType === 'logistics' && stage.metadata.distance && (
                         <div>Distance: {stage.metadata.distance} km</div>

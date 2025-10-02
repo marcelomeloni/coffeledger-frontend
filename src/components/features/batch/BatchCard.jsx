@@ -18,7 +18,7 @@ export function BatchCard({ batch, currentUserPublicKey }) {
           <div className="flex items-start justify-between">
             <div>
               <Card.Title>{batch.onchain_id}</Card.Title>
-              <Card.Description>Produtor: {batch.producer_name}</Card.Description>
+              <Card.Description>Criador: {batch.producer_name}</Card.Description>
             </div>
             <div className={`flex items-center gap-2 p-2 rounded-full text-xs font-semibold ${
               batch.status === 'completed' ? 'bg-gray-100 text-gray-600' : 'bg-green-50 text-green-700'
