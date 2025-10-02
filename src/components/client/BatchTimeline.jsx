@@ -1,213 +1,266 @@
 import React from 'react';
-import {
-  Leaf, Factory, Warehouse, Search, Coffee, Package, Truck, Globe, Award, CalendarDays, ExternalLink, ChevronRight 
-} from 'lucide-react';
+import { Coffee, Warehouse, Eye, CheckCircle, Flame, Package, Truck, Users, Leaf } from 'lucide-react';
 
-// Mapeamentos para labels e ícones da Lucide React
-const stageInfo = {
-  'producer': { title: 'Coffee Origin', icon: Leaf },
-  'beneficiamento': { title: 'Processing', icon: Factory },
-  'warehouse': { title: 'Storage', icon: Warehouse },
-  'grader': { title: 'Quality Grading', icon: Search },
-  'roaster': { title: 'Roasting', icon: Coffee },
-  'packager': { title: 'Packaging', icon: Package },
-  'logistics': { title: 'Logistics', icon: Truck },
-  'sustainability': { title: 'Sustainability', icon: Globe },
-  'end_consumer': { title: 'To the Consumer', icon: Award }, // Usando Award para um toque final
+// Função para detectar o tipo de etapa baseado nos metadados
+const detectStageType = (metadata) => {
+  if (!metadata || typeof metadata !== 'object') {
+    return 'unknown';
+  }
+
+  // Verifica campos específicos de cada tipo de etapa
+  if (metadata.farmName || metadata.producerStory) return 'producer';
+  if (metadata.warehouseName || metadata.storageType) return 'warehouse';
+  if (metadata.millingFacilityName || metadata.processingSteps) return 'beneficiamento';
+  if (metadata.evaluatorName || metadata.scaScore) return 'grader';
+  if (metadata.roasteryName || metadata.roastProfile) return 'roaster';
+  if (metadata.packagingCompany || metadata.packagingType) return 'packager';
+  if (metadata.trackingId || metadata.vehicleType) return 'logistics';
+  if (metadata.distributorName || metadata.destinationMarket) return 'distributor';
+  if (metadata.preparationNotes || metadata.consumerExperience) return 'end_consumer';
+  if (metadata.carbonFootprint || metadata.renewableEnergy) return 'sustainability';
+
+  return 'unknown';
 };
 
-// Mock data para garantir que o componente sempre tenha algo para exibir durante o desenvolvimento
-const mockStages = [
-  {
-    step_name: 'producer',
-    ipfsCid: 'mock-cid-producer-1',
-    timestamp: 1715788800000, // milissegundos
-    metadata: {
-      name: "Farm Ouro Negro",
-      description: "Harvested high-quality Bourbon Amarelo beans.",
-      location: "São Sebastião da Grama-SP",
-    },
-    status: 'completed'
-  },
-  {
-    step_name: 'beneficiamento',
-    ipfsCid: 'mock-cid-beneficiamento-2',
-    timestamp: 1718812800000, // milissegundos
-    metadata: {
-      name: "Processing Plant A",
-      description: "Beans milled and prepared for storage.",
-      location: "Industrial Zone, MG",
-    },
-    status: 'completed'
-  },
-  {
-    step_name: 'warehouse',
-    ipfsCid: 'mock-cid-warehouse-3',
-    timestamp: 1721596800000, // milissegundos
-    metadata: {
-      name: "Main Storage Facility",
-      description: "Stored in controlled conditions to preserve quality.",
-      location: "São Paulo, SP",
-    },
-    status: 'completed'
-  },
-  {
-    step_name: 'grader',
-    ipfsCid: 'mock-cid-grader-4',
-    timestamp: 1725225600000, // milissegundos
-    metadata: {
-      name: "Q-Grader Evaluation",
-      description: "Achieved an outstanding SCA score of 89.25.",
-      location: "Coffee Lab",
-    },
-    status: 'completed'
-  },
-  {
-    step_name: 'roaster',
-    ipfsCid: 'mock-cid-roaster-5',
-    timestamp: 1725571200000, // milissegundos
-    metadata: {
-      name: "Craft & Roast Co.",
-      description: "Expertly roasted to a medium-light profile.",
-      location: "São Paulo, SP",
-    },
-    status: 'completed'
-  },
-  {
-    step_name: 'packager',
-    ipfsCid: 'mock-cid-packager-6',
-    timestamp: 1726003200000, // milissegundos
-    metadata: {
-      name: "Artisan Packaging",
-      description: "Packed in eco-friendly 250g bags.",
-      location: "São Paulo, SP",
-    },
-    status: 'in_progress' // Exemplo de etapa em andamento
-  },
-  {
-    step_name: 'logistics',
-    ipfsCid: 'mock-cid-logistics-7',
-    timestamp: 1726262400000, // milissegundos
-    metadata: {
-      name: "Coffee Express",
-      description: "Currently in transit to local distributors.",
-      location: "São Paulo-SP to Destination",
-    },
-    status: 'upcoming' // Exemplo de etapa futura
-  }
-];
-
-
-const formatDate = (timestamp) => {
-  if (!timestamp) return 'Not available';
-  const date = new Date(timestamp);
-  // Verifica se a data é válida
-  if (isNaN(date.getTime())) {
-    return 'Invalid Date';
-  }
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+// Mapeamento de ícones por tipo detectado
+const stageIcons = {
+  producer: Coffee,
+  warehouse: Warehouse,
+  beneficiamento: Eye,
+  grader: CheckCircle,
+  roaster: Flame,
+  packager: Package,
+  logistics: Truck,
+  distributor: Users,
+  sustainability: Leaf,
+  end_consumer: Users,
+  unknown: CheckCircle
 };
 
-// Sub-componente para cada cartão da etapa
-const StageCard = ({ stage, index }) => {
-  const info = stageInfo[stage.step_name] || { title: `Stage #${index + 1}`, icon: ExternalLink };
-  const IconComponent = info.icon; // Componente de ícone dinâmico
-  
-  const isCompleted = stage.status === 'completed';
-  const isUpcoming = stage.status === 'upcoming';
-  const cardClasses = `
-    bg-gray-800 bg-opacity-60 p-6 rounded-2xl shadow-xl border 
-    ${isCompleted ? 'border-amber-500' : isUpcoming ? 'border-gray-600' : 'border-gray-700'}
-    transition-all duration-300 transform 
-    group-hover:scale-[1.02] group-hover:shadow-2xl 
-    ${isCompleted ? 'group-hover:border-amber-400' : 'group-hover:border-white'}
-  `;
+// Mapeamento de nomes amigáveis
+const stageDisplayNames = {
+  producer: 'Coffee Origin',
+  warehouse: 'Warehouse Storage',
+  beneficiamento: 'Dry Mill Processing',
+  grader: 'Quality Grading',
+  roaster: 'Roasting Process',
+  packager: 'Packaging',
+  logistics: 'Transport & Logistics',
+  distributor: 'Distribution',
+  sustainability: 'Sustainability',
+  end_consumer: 'Brewing Experience',
+  unknown: 'Processing Step'
+};
 
-  const titleClasses = `
-    font-bold text-xl 
-    ${isCompleted ? 'text-amber-300' : 'text-white'}
-  `;
+export const BatchTimeline = ({ stages }) => {
+  console.log('📊 BatchTimeline received stages:', stages);
 
-  const descriptionClasses = `
-    text-gray-400 mt-2 text-sm italic
-    ${isUpcoming ? 'text-gray-500' : ''}
-  `;
+  // Processamento seguro dos stages baseado nos metadados
+  const processedStages = React.useMemo(() => {
+    if (!stages || !Array.isArray(stages)) {
+      console.log('📭 No stages array provided');
+      return [];
+    }
+
+    return stages
+      .filter(stage => {
+        const isValid = stage && typeof stage === 'object';
+        if (!isValid) {
+          console.warn('⚠️ Invalid stage filtered out:', stage);
+        }
+        return isValid;
+      })
+      .map((stage, index) => {
+        try {
+          // Detecta o tipo de etapa baseado nos metadados
+          const stageType = detectStageType(stage.metadata);
+          const displayName = stageDisplayNames[stageType] || 'Processing Step';
+          const Icon = stageIcons[stageType] || stageIcons.unknown;
+
+          // Extrai nome do metadata de forma segura
+          const getMetadataName = () => {
+            if (!stage.metadata || typeof stage.metadata !== 'object') {
+              return 'Processing in progress';
+            }
+
+            const metadata = stage.metadata;
+            
+            // Tenta encontrar um nome baseado no tipo de etapa
+            switch (stageType) {
+              case 'producer':
+                return metadata.farmName || 'Coffee Farm';
+              case 'warehouse':
+                return metadata.warehouseName || 'Storage Facility';
+              case 'beneficiamento':
+                return metadata.millingFacilityName || 'Processing Facility';
+              case 'grader':
+                return metadata.evaluatorName ? `Evaluated by ${metadata.evaluatorName}` : 'Quality Evaluation';
+              case 'roaster':
+                return metadata.roasteryName || 'Roasting Facility';
+              case 'packager':
+                return metadata.packagingCompany || 'Packaging Facility';
+              case 'logistics':
+                return metadata.origin ? `From ${metadata.origin}` : 'Transport';
+              case 'distributor':
+                return metadata.distributorName || 'Distribution Center';
+              case 'sustainability':
+                return 'Environmental Impact';
+              case 'end_consumer':
+                return 'Consumer Experience';
+              default:
+                return (
+                  metadata.name || 
+                  metadata.farmName || 
+                  metadata.warehouseName || 
+                  metadata.roasteryName || 
+                  metadata.packagingCompany || 
+                  metadata.distributorName ||
+                  metadata.millingFacilityName ||
+                  metadata.evaluatorName ||
+                  'Processing complete'
+                );
+            }
+          };
+
+          const metadataName = getMetadataName();
+
+          return {
+            ...stage,
+            processedStageType: stageType,
+            processedDisplayName: displayName,
+            processedMetadataName: metadataName,
+            Icon
+          };
+        } catch (error) {
+          console.error(`❌ Error processing stage ${index}:`, error);
+          return {
+            processedStageType: 'unknown',
+            processedDisplayName: 'Processing Step',
+            processedMetadataName: 'Data processing',
+            Icon: stageIcons.unknown,
+            isError: true
+          };
+        }
+      });
+  }, [stages]);
+
+  console.log('✅ Processed stages for timeline:', processedStages);
+
+  if (processedStages.length === 0) {
+    return (
+      <section className="relative py-32 px-6 bg-black">
+        <div className="max-w-5xl mx-auto relative">
+          <div className="text-center">
+            <h2 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-stone-200 to-stone-500 mb-4">
+              Journey Timeline
+            </h2>
+            <p className="text-xl text-stone-400">
+              Timeline data will appear as the coffee journey progresses
+            </p>
+            <div className="mt-8 p-6 bg-stone-900/30 rounded-2xl max-w-md mx-auto">
+              <p className="text-stone-500 text-sm">
+                The coffee is still making its way through the supply chain. 
+                Check back later to see the complete journey.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <a href={`#${stage.step_name}-section`} className="block group scroll-smooth">
-      <div className={`flex items-start space-x-4 ${index % 2 === 0 ? 'sm:justify-end sm:flex-row-reverse' : ''}`}>
-        {/* Cartão de Conteúdo */}
-        <div className={`flex-1 ${index % 2 === 0 ? 'sm:text-right' : ''} ${cardClasses}`}>
-          <div className="flex items-center justify-between mb-2">
-            <h3 className={titleClasses}>{info.title}</h3>
-            <span className="text-sm text-gray-400 flex items-center">
-              <CalendarDays className="h-4 w-4 mr-1 text-gray-500" />
-              {formatDate(stage.timestamp)}
-            </span>
-          </div>
-          
-          <p className={descriptionClasses}>
-            {stage.metadata?.description || `Details about the ${info.title.toLowerCase()} stage.`}
+    <section className="relative py-32 px-6 bg-black">
+      <div className="max-w-5xl mx-auto relative">
+        <div className="text-center mb-20">
+          <h2 className="text-5xl pb-3 md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-stone-200 to-stone-500 mb-4">
+            Journey Timeline
+          </h2>
+          <p className="text-xl text-stone-400">
+            {processedStages.length} step{processedStages.length !== 1 ? 's' : ''} recorded on blockchain
           </p>
+        </div>
+
+        <div className="relative">
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-amber-600 via-stone-600 to-emerald-600" />
           
-          <div className="mt-4 text-right">
-            <span
-              className="text-amber-400 hover:text-amber-300 underline text-sm font-medium flex items-center justify-end transition-colors duration-200"
-            >
-              View Details
-              <ChevronRight className="h-4 w-4 inline ml-1 transition-transform duration-200 group-hover:translate-x-1" />
-            </span>
+          <div className="space-y-12">
+            {processedStages.map((stage, i) => (
+              <div key={i} className="relative pl-20">
+                <div className={`absolute left-0 w-16 h-16 rounded-full flex items-center justify-center backdrop-blur-sm border-2 ${
+                  stage.isError 
+                    ? 'bg-red-900/20 border-red-600/40' 
+                    : 'bg-gradient-to-br from-amber-600/20 to-stone-950 border-amber-600/40'
+                }`}>
+                  <stage.Icon className={`w-8 h-8 ${
+                    stage.isError ? 'text-red-400' : 'text-amber-400'
+                  }`} />
+                </div>
+
+                <div className={`p-6 rounded-2xl border transition-all ${
+                  stage.isError
+                    ? 'bg-red-950/10 border-red-800/30'
+                    : 'bg-stone-950/50 border-stone-800/50 hover:border-amber-600/30'
+                }`}>
+                  <h3 className="text-2xl font-bold text-amber-100 mb-2">
+                    {stage.processedDisplayName}
+                  </h3>
+                  
+                  <p className="text-stone-400 mb-3">
+                    {stage.processedMetadataName}
+                  </p>
+
+                  {/* Mostra informações específicas baseadas no tipo */}
+                  {stage.metadata && (
+                    <div className="mb-3 text-sm text-stone-500">
+                      {stage.processedStageType === 'producer' && stage.metadata.variety && (
+                        <div>Variety: {stage.metadata.variety}</div>
+                      )}
+                      {stage.processedStageType === 'grader' && stage.metadata.scaScore && (
+                        <div>SCA Score: {stage.metadata.scaScore}</div>
+                      )}
+                      {stage.processedStageType === 'roaster' && stage.metadata.roastProfile && (
+                        <div>Roast: {stage.metadata.roastProfile}</div>
+                      )}
+                      {stage.processedStageType === 'logistics' && stage.metadata.distance && (
+                        <div>Distance: {stage.metadata.distance} km</div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-4 text-xs">
+                    {stage.ipfsCid && stage.ipfsCid !== 'Qm...' && (
+                      <div className="font-mono text-stone-500">
+                        IPFS: {stage.ipfsCid.substring(0, 20)}...
+                      </div>
+                    )}
+                    
+                    {stage.txSignature && (
+                      <div className="font-mono text-stone-500">
+                        TX: {stage.txSignature.substring(0, 20)}...
+                      </div>
+                    )}
+
+                    {stage.isError && (
+                      <div className="text-red-400 flex items-center gap-1">
+                        <span>⚠️ Data incomplete</span>
+                      </div>
+                    )}
+
+                    {!stage.metadata && (
+                      <div className="text-amber-400 flex items-center gap-1">
+                        <span>⏳ Awaiting details</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+
+        
       </div>
-    </a>
+    </section>
   );
 };
-
-export function BatchTimeline({ stages }) {
-  const dataToRender = stages && stages.length > 0 ? stages : mockStages;
-  const hasStages = dataToRender.length > 0;
-
-  return (
-    <div className="container mx-auto px-4 py-16 text-white">
-      <div className="max-w-4xl mx-auto relative">
-        {/* Linha vertical central */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-transparent via-gray-700 to-transparent hidden sm:block z-0"></div>
-        
-        <h2 className="text-3xl sm:text-4xl font-playfair font-black text-center mb-16 drop-shadow-lg">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200">
-            The Journey: A Story in Stages
-          </span>
-        </h2>
-        
-        <div className="space-y-16">
-          {hasStages ? (
-            dataToRender.map((stage, index) => {
-              const IconComponent = stageInfo[stage.step_name]?.icon || ExternalLink;
-              const isCompleted = stage.status === 'completed';
-              const isUpcoming = stage.status === 'upcoming';
-              const isCurrent = stage.status === 'in_progress';
-
-              return (
-                <div key={index} className={`relative group ${index % 2 === 0 ? 'sm:pr-10' : 'sm:pl-10'}`}>
-                  {/* Ícone circular na linha do tempo */}
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 top-0 mt-6 w-12 h-12 rounded-full flex items-center justify-center text-white text-xl shadow-md transition-all duration-300 z-10 
-                    ${isCompleted ? 'bg-amber-500 shadow-lg shadow-amber-500/30' : 
-                      isCurrent ? 'bg-blue-500 shadow-lg shadow-blue-500/30' : 
-                      'bg-gray-700 border-2 border-gray-600'
-                    }
-                    group-hover:scale-110 group-hover:shadow-xl`}>
-                    <IconComponent className="h-6 w-6" />
-                  </div>
-                  <StageCard stage={stage} index={index} />
-                </div>
-              );
-            })
-          ) : (
-            <p className="text-gray-500 italic text-center sm:col-span-2">No stages registered for this batch yet.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}

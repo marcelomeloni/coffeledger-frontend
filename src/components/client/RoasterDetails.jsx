@@ -1,200 +1,101 @@
 import React from 'react';
-import { LocationMap } from './LocationMap';
 
-// Mapeamentos para labels em inglês para consistência
-const roastNumbers = {
-  test_roast: 'Test Roast',
-  final_roast: 'Final Roast',
-  production: 'Production Batch'
-};
+const RoastMetric = ({ label, value, highlight }) => (
+  <div className={`flex justify-between items-center p-4 rounded-xl ${
+    highlight ? 'bg-orange-900/20 border border-orange-700/30' : 'bg-stone-900/30'
+  }`}>
+    <span className="text-stone-400">{label}</span>
+    <span className={`font-semibold ${highlight ? 'text-orange-300' : 'text-stone-200'} capitalize`}>
+      {value}
+    </span>
+  </div>
+);
 
-const roastDestinations = {
-  espresso: 'Espresso',
-  filter: 'Filter',
-  microlot: 'Exclusive Microlot',
-  blend: 'Blend'
-};
-
-const roastProfiles = {
-  light: 'Light',
-  medium_light: 'Medium-Light',
-  medium: 'Medium',
-  medium_dark: 'Medium-Dark',
-  dark: 'Dark',
-  espresso: 'Espresso',
-  filter: 'Filter',
-  french: 'French'
-};
-
-const roasterTypes = {
-  drum: 'Drum Roaster',
-  fluid_bed: 'Fluid Bed',
-  hot_air: 'Hot Air'
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'Not available';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
-export function RoasterDetails({ roasterMetadata }) {
-  // Mock data for development
-  const mockRoasterData = {
-    roasteryName: "Craft & Roast Coffee Co.",
-    roasteryLocation: { lat: -23.5505, lng: -46.6333 },
-    roastNumber: "final_roast",
-    roastDestination: "filter",
-    postRoastProtocol: "Cupping validation performed 24 hours after roasting by our head roaster to ensure quality.",
-    roastProfile: "medium_light",
-    roastDate: "2024-09-05T00:00:00.000Z",
-    batchSize: 15,
-    chargeTemperature: 180,
-    temperature: 215,
-    dropTemperature: 198,
-    duration: 12,
-    firstCrack: 8.5,
-    secondCrack: 11.2,
-    developmentTime: 2.5,
-    developmentRatio: 20.8,
-    roasterType: "drum",
-    roastNotes: "Developed notes of red fruit and caramel. Clean cup with a bright, balanced acidity. Roast was uniform and without defects."
+const TemperatureCard = ({ label, value, unit, color }) => {
+  const colors = {
+    blue: 'from-blue-600/20 to-blue-900/20 border-blue-600/30 text-blue-300',
+    orange: 'from-orange-600/20 to-orange-900/20 border-orange-600/30 text-orange-300',
+    red: 'from-red-600/20 to-red-900/20 border-red-600/30 text-red-300'
   };
 
-  const data = roasterMetadata || mockRoasterData;
-
-  const {
-    roasteryName,
-    roasteryLocation,
-    roastNumber,
-    roastDestination,
-    postRoastProtocol,
-    roastProfile,
-    roastDate,
-    batchSize,
-    chargeTemperature,
-    temperature,
-    dropTemperature,
-    duration,
-    firstCrack,
-    secondCrack,
-    developmentTime,
-    developmentRatio,
-    roasterType,
-    roastNotes
-  } = data;
-
   return (
-    <div className="container mx-auto px-4 py-16 text-white">
-      <div className="max-w-6xl mx-auto">
-        {/* Título da Seção */}
-        <h2 className="text-3xl sm:text-4xl font-playfair font-black text-center mb-10 drop-shadow-lg">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200">
-            The Roasting Process
-          </span>
-        </h2>
-        
-        {/* Seção Principal: Destaque do Perfil e da Localização */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start mb-16">
-          {/* Lado Esquerdo: Localização e Informações Chave */}
-          <div className="bg-gray-800 bg-opacity-50 p-6 rounded-2xl shadow-lg border border-gray-700">
-            <h3 className="text-2xl font-bold text-amber-300 drop-shadow-md mb-1">
-              {roasteryName || 'Roastery not specified'}
-            </h3>
-            <p className="text-sm font-light text-gray-400 mb-6">
-              {roasteryLocation ? `${roasteryLocation.lat}, ${roasteryLocation.lng}` : 'Location not available'}
-            </p>
-            <LocationMap 
-              lat={roasteryLocation?.lat} 
-              lng={roasteryLocation?.lng} 
-              farmName={roasteryName} 
-              address={'Roastery Location'} 
-            />
-          </div>
-
-          {/* Lado Direito: Perfil da Torra em Destaque */}
-          <div className="bg-gray-800 bg-opacity-50 p-6 rounded-2xl shadow-lg border border-gray-700 flex flex-col justify-between h-full">
-            <div>
-              <h3 className="text-2xl font-bold text-amber-300 mb-4">Roast Profile</h3>
-              <p className="text-4xl sm:text-5xl font-playfair font-black text-white leading-none mb-4">
-                {roastProfiles[roastProfile] || roastProfile || 'Not specified'}
-              </p>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-gray-300 text-sm">
-                <div className="flex flex-col">
-                  <span className="text-gray-400 text-xs uppercase font-semibold">Roast Date</span>
-                  <span className="text-white mt-1">{formatDate(roastDate)}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-gray-400 text-xs uppercase font-semibold">Batch Size</span>
-                  <span className="text-white mt-1">{batchSize ? `${batchSize} kg` : 'Not specified'}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-gray-400 text-xs uppercase font-semibold">Roast Type</span>
-                  <span className="text-white mt-1">{roasterTypes[roasterType] || roasterType || 'Not specified'}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-gray-400 text-xs uppercase font-semibold">Destination</span>
-                  <span className="text-white mt-1">{roastDestinations[roastDestination] || roastDestination || 'Not specified'}</span>
-                </div>
-              </div>
-            </div>
-            {postRoastProtocol && (
-              <div className="mt-8 border-t border-gray-700 pt-4">
-                <h4 className="text-md font-semibold text-amber-300 mb-2">Protocol</h4>
-                <p className="text-sm font-light italic leading-relaxed text-gray-300">
-                  {postRoastProtocol}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Seção da Curva de Torra e Dados Técnicos */}
-        <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700">
-          <h3 className="text-xl font-bold mb-4 text-amber-300">Roasting Metrics</h3>
-          <p className="text-sm font-light leading-relaxed italic text-gray-300 mb-6">
-            A precisely controlled process is key to unlocking the full potential of these beans.
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 text-gray-300 text-sm">
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">Total Duration</span>
-              <span className="text-white mt-1 text-lg font-bold">{duration ? `${duration} min` : 'N/A'}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">Development Time</span>
-              <span className="text-white mt-1 text-lg font-bold">{developmentTime ? `${developmentTime} min` : 'N/A'}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">First Crack</span>
-              <span className="text-white mt-1 text-lg font-bold">{firstCrack ? `${firstCrack} min` : 'N/A'}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">Charge Temp</span>
-              <span className="text-white mt-1 text-lg font-bold">{chargeTemperature ? `${chargeTemperature}°C` : 'N/A'}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">Max Temp</span>
-              <span className="text-white mt-1 text-lg font-bold">{temperature ? `${temperature}°C` : 'N/A'}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">Drop Temp</span>
-              <span className="text-white mt-1 text-lg font-bold">{dropTemperature ? `${dropTemperature}°C` : 'N/A'}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="text-gray-400 text-xs uppercase font-semibold">Dev Ratio</span>
-              <span className="text-white mt-1 text-lg font-bold">{developmentRatio ? `${developmentRatio}%` : 'N/A'}</span>
-            </div>
-          </div>
-          {roastNotes && (
-            <div className="mt-8 border-t border-gray-700 pt-4">
-              <h4 className="text-md font-semibold text-amber-300 mb-2">Roaster's Notes</h4>
-              <p className="text-sm font-light leading-relaxed italic text-gray-300">
-                {roastNotes}
-              </p>
-            </div>
-          )}
-        </div>
+    <div className={`p-6 bg-gradient-to-br ${colors[color]} border rounded-2xl`}>
+      <div className="text-sm text-stone-400 uppercase tracking-wider mb-2">{label}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="text-5xl font-bold">{value}</span>
+        <span className="text-2xl">{unit}</span>
       </div>
     </div>
   );
-}
+};
+
+export const RoasterDetails = ({ roasterMetadata }) => {
+  if (!roasterMetadata) return null;
+
+  return (
+    <section className="relative py-32 px-6 bg-black overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-t from-orange-950/20 via-transparent to-transparent animate-pulse" />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-orange-600" />
+            <span className="text-orange-600 text-sm font-medium tracking-[0.3em] uppercase">Transformation</span>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-orange-600" />
+          </div>
+          <h2 className="text-5xl pb-3 md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-orange-400 to-red-500 mb-4">
+            The Art of Roasting
+          </h2>
+          <p className="text-xl text-stone-400 max-w-2xl mx-auto">
+            Crafted at {roasterMetadata.roasteryName}
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 mb-12">
+          <div className="p-8 bg-gradient-to-br from-orange-950/30 to-black border border-orange-900/30 rounded-2xl">
+            <h3 className="text-2xl font-bold text-orange-100 mb-6">Roast Profile</h3>
+            <div className="space-y-4">
+              <RoastMetric label="Profile" value={roasterMetadata.roastProfile} highlight />
+              <RoastMetric label="Roast Date" value={new Date(roasterMetadata.roastDate).toLocaleDateString()} />
+              <RoastMetric label="Batch Size" value={`${roasterMetadata.batchSize || '15'} kg`} />
+              <RoastMetric label="Duration" value={`${roasterMetadata.duration || '12'} min`} />
+              {roasterMetadata.firstCrack && (
+                <RoastMetric label="First Crack" value={`${roasterMetadata.firstCrack} min`} />
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <TemperatureCard 
+              label="Charge Temp" 
+              value={roasterMetadata.chargeTemperature || 180}
+              unit="°C"
+              color="blue"
+            />
+            <TemperatureCard 
+              label="Max Temp" 
+              value={roasterMetadata.temperature || 215}
+              unit="°C"
+              color="orange"
+            />
+            <TemperatureCard 
+              label="Drop Temp" 
+              value={roasterMetadata.dropTemperature || 198}
+              unit="°C"
+              color="red"
+            />
+          </div>
+        </div>
+
+        <div className="text-center p-8 bg-gradient-to-r from-orange-950/20 via-red-950/20 to-orange-950/20 border border-orange-600/20 rounded-2xl backdrop-blur-sm">
+          <div className="text-sm text-orange-400 uppercase tracking-widest mb-2">Recommended For</div>
+          <div className="text-3xl font-bold text-orange-200 capitalize">
+            {roasterMetadata.roastDestination || 'Espresso & Filter'}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};

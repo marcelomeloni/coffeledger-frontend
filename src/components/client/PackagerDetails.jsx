@@ -1,156 +1,88 @@
 import React from 'react';
+import { Box, Package, Calendar, Coffee } from 'lucide-react';
 
-// Mapeamentos para labels
-const packagingTypes = {
-  vacuum_bag: 'Vacuum Sealed Bag',
-  valve_bag: 'Valve Bag',
-  kraft_bag: 'Kraft Paper Bag',
-  tin_can: 'Tin Can',
-  doypack: 'Doypack',
-  grain_pro: 'Grain Pro'
-};
+const PackageInfo = ({ icon, label, value, highlight }) => (
+  <div className={`p-6 rounded-2xl border transition-all hover:scale-105 ${
+    highlight 
+      ? 'bg-gradient-to-br from-purple-600/20 to-purple-950/20 border-purple-600/40' 
+      : 'bg-stone-950/50 border-stone-800/30'
+  }`}>
+    <div className="flex items-center gap-3 mb-3">
+      {React.cloneElement(icon, { className: `w-8 h-8 ${highlight ? 'text-purple-300' : 'text-purple-400'}` })}
+    </div>
+    <div className="text-sm text-stone-500 uppercase tracking-wider mb-2">{label}</div>
+    <div className={`text-xl font-semibold ${highlight ? 'text-purple-200' : 'text-stone-200'} capitalize`}>
+      {value}
+    </div>
+  </div>
+);
 
-const packageSizes = {
-  '250g': '250g',
-  '500g': '500g',
-  '1kg': '1kg',
-  '2kg': '2kg',
-  '5kg': '5kg',
-  '60kg': '60kg (Bag)'
-};
+const InfoRow = ({ label, value }) => (
+  <div className="flex justify-between items-center p-3 bg-slate-900/30 rounded-lg">
+    <span className="text-slate-400 text-sm">{label}</span>
+    <span className="text-slate-200 font-medium capitalize">{value}</span>
+  </div>
+);
 
-const gasFlushingTypes = {
-  none: 'None',
-  nitrogen: 'Nitrogen',
-  carbon_dioxide: 'Carbon Dioxide'
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'Not available';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
-export function PackagerDetails({ packagerMetadata }) {
-  const mockPackagerData = {
-    packagingCompany: "Artisan Coffee Packaging",
-    location: "São Paulo, SP - Brazil",
-    packagingDesign: "Custom, minimalist design with gold foil accents and embossed logo.",
-    producerSeal: "yes",
-    preparationMessage: "Recommended for V60 pour-over. Use 1:16 coffee to water ratio. Enjoy within 3 weeks of opening for optimal flavor.",
-    packagingType: "doypack",
-    packageSize: "250g",
-    weight: 250,
-    packagingDate: "2024-09-10T00:00:00.000Z",
-    expirationDate: "2025-09-10T00:00:00.000Z",
-    lotNumber: "LOT-2025-001-BR",
-    qrCode: "yes",
-    gasFlushing: "nitrogen",
-    packagingNotes: "Batch packaged on a state-of-the-art machine. Each bag sealed with nitrogen gas to preserve freshness."
-  };
-
-  const data = packagerMetadata || mockPackagerData;
-
-  const {
-    packagingCompany,
-    location,
-    packagingDesign,
-    producerSeal,
-    preparationMessage,
-    packagingType,
-    packageSize,
-    weight,
-    packagingDate,
-    expirationDate,
-    lotNumber,
-    qrCode,
-    gasFlushing,
-    packagingNotes
-  } = data;
+export const PackagerDetails = ({ packagerMetadata }) => {
+  if (!packagerMetadata) return null;
 
   return (
-    <div className="container mx-auto px-4 py-16 text-white">
-      <div className="max-w-4xl mx-auto">
-        {/* Título Principal */}
-        <h2 className="text-3xl sm:text-4xl font-playfair font-black text-center mb-10 drop-shadow-lg">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200">
-            The Final Touch
-          </span>
-        </h2>
-        
-        {/* Introdução ao Processo de Embalagem */}
-        <div className="text-center mb-16">
-          <p className="text-lg sm:text-xl font-light italic leading-relaxed text-gray-400">
-            Your coffee, now perfectly roasted, is prepared for its final destination.
-            The packaging is designed to preserve its exceptional quality and tell its unique story.
+    <section className="relative py-32 px-6 bg-gradient-to-b from-black via-purple-950 to-black">
+      <div className="max-w-7xl mx-auto relative">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-purple-600" />
+            <span className="text-purple-600 text-sm font-medium tracking-[0.3em] uppercase">Packaging</span>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-purple-600" />
+          </div>
+          <h2 className="text-5xl pb-3 md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-purple-500 mb-4">
+            Premium Packaging
+          </h2>
+          <p className="text-xl text-stone-400 max-w-2xl mx-auto">
+            {packagerMetadata.packagingCompany}
           </p>
         </div>
 
-        {/* Informações da Embalagem - Layout em Colunas */}
-        <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700 mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-12">
-            {/* Lado Esquerdo: Detalhes do Design */}
-            <div className="flex flex-col space-y-4">
-              <h3 className="text-xl font-bold text-amber-300 mb-2">Design & Identity</h3>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Packaging Type</span>
-                <span className="text-white mt-1">{packagingTypes[packagingType] || 'Not specified'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Package Size</span>
-                <span className="text-white mt-1">{packageSizes[packageSize] || 'Not specified'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Net Weight</span>
-                <span className="text-white mt-1">{weight ? `${weight}g` : 'Not specified'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Lot Number</span>
-                <span className="text-white mt-1">{lotNumber || 'Not specified'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Producer Seal</span>
-                <span className="text-white mt-1">{producerSeal === 'yes' ? 'Yes' : 'No'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">QR Code</span>
-                <span className="text-white mt-1">{qrCode === 'yes' ? 'Yes' : 'No'}</span>
-              </div>
-            </div>
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <PackageInfo icon={<Box />} label="Type" value={packagerMetadata.packagingType} />
+          <PackageInfo icon={<Package />} label="Size" value={packagerMetadata.packageSize || packagerMetadata.weight + 'g'} />
+          <PackageInfo icon={<Calendar />} label="Packed" value={new Date(packagerMetadata.packagingDate).toLocaleDateString('en-US')} highlight />
+        </div>
 
-            {/* Lado Direito: Detalhes de Frescor e Preparo */}
-            <div className="flex flex-col space-y-4">
-              <h3 className="text-xl font-bold text-amber-300 mb-2">Preservation & Freshness</h3>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Packaging Date</span>
-                <span className="text-white mt-1">{formatDate(packagingDate)}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Expiration Date</span>
-                <span className="text-white mt-1">{formatDate(expirationDate)}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Gas Flushing</span>
-                <span className="text-white mt-1">{gasFlushingTypes[gasFlushing] || 'Not specified'}</span>
-              </div>
-              <div className="flex flex-col mt-4">
-                <h4 className="text-md font-semibold text-amber-300">Preparation Message</h4>
-                <p className="text-sm font-light leading-relaxed italic text-gray-300 mt-1">
-                  {preparationMessage || 'No preparation instructions available.'}
-                </p>
-              </div>
+        {packagerMetadata.preparationMessage && (
+          <div className="p-8 bg-gradient-to-br from-purple-950/30 to-black border border-purple-900/30 rounded-2xl mb-8">
+            <h3 className="text-2xl font-bold text-purple-100 mb-4 flex items-center gap-2">
+              <Coffee className="w-6 h-6" />
+              Brewing Recommendations
+            </h3>
+            <p className="text-lg text-stone-300 leading-relaxed">{packagerMetadata.preparationMessage}</p>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="p-6 bg-stone-950/50 border border-stone-800/50 rounded-2xl">
+            <h3 className="text-xl font-bold text-purple-100 mb-4">Package Details</h3>
+            <div className="space-y-3">
+              <InfoRow label="Lot Number" value={packagerMetadata.lotNumber} />
+              <InfoRow label="QR Code" value={packagerMetadata.qrCode === 'yes' ? '✓ Included' : 'Not included'} />
+              {packagerMetadata.gasFlushing && packagerMetadata.gasFlushing !== 'none' && (
+                <InfoRow label="Gas Flushing" value={packagerMetadata.gasFlushing} />
+              )}
+            </div>
+          </div>
+
+          <div className="p-6 bg-stone-950/50 border border-stone-800/50 rounded-2xl">
+            <h3 className="text-xl font-bold text-purple-100 mb-4">Freshness</h3>
+            <div className="space-y-3">
+              <InfoRow label="Packaging Date" value={new Date(packagerMetadata.packagingDate).toLocaleDateString('en-US')} />
+              {packagerMetadata.expirationDate && (
+                <InfoRow label="Best Before" value={new Date(packagerMetadata.expirationDate).toLocaleDateString('en-US')} />
+              )}
             </div>
           </div>
         </div>
-        
-        {/* Seção para Notas Adicionais */}
-        <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700">
-          <h3 className="text-xl font-bold mb-4 text-amber-300">Packaging Notes</h3>
-          <p className="text-sm font-light leading-relaxed italic text-gray-300">
-            {packagingNotes || 'No additional notes for this packaging stage.'}
-          </p>
-        </div>
       </div>
-    </div>
+    </section>
   );
-}
+};

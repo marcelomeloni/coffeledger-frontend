@@ -1,166 +1,100 @@
 import React from 'react';
-import { LocationMap } from './LocationMap';
+import { MapPin, Truck, TrendingUp, ThermometerSun, Droplets } from 'lucide-react';
 
-const formatDate = (dateString) => {
-  if (!dateString) return 'Não disponível';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
-};
+const TransportMetric = ({ icon, label, value }) => (
+  <div className="p-6 bg-stone-950/50 border border-stone-800/50 rounded-2xl">
+    <div className="flex items-center gap-3 mb-3">
+      {React.cloneElement(icon, { className: 'w-6 h-6 text-blue-400' })}
+    </div>
+    <div className="text-sm text-stone-500 uppercase tracking-wider mb-2">{label}</div>
+    <div className="text-lg font-semibold text-stone-200">{value}</div>
+  </div>
+);
 
-const formatTime = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-};
+const InfoRow = ({ label, value }) => (
+  <div className="flex justify-between items-center p-3 bg-slate-900/30 rounded-lg">
+    <span className="text-slate-400 text-sm">{label}</span>
+    <span className="text-slate-200 font-medium capitalize">{value}</span>
+  </div>
+);
 
-// Mapeamentos para labels
-const transportCertifications = {
-  organic_certified: 'Transporte Orgânico Certificado',
-  sustainable: 'Transporte Sustentável',
-  carbon_neutral: 'Carbono Neutro'
-};
+export const LogisticsDetails = ({ logisticsMetadata }) => {
+  if (!logisticsMetadata) return null;
 
-const vehicleTypes = {
-  truck_refrigerated: 'Caminhão Refrigerado',
-  truck_dry: 'Caminhão Seco',
-  van: 'Van',
-  container_ship: 'Navio Container',
-  air_cargo: 'Avião de Carga'
-};
-
-export function LogisticsDetails({ logisticsMetadata }) {
-  const mockLogisticsData = {
-    trackingId: "TRK-2025-001-BLOCKCHAIN-HASH",
-    transportCertifications: ["sustainable", "carbon_neutral"],
-    origin: "Fazenda Santa Maria, Monte Verde-MG",
-    originCoordinates: { lat: -22.8837, lng: -46.7275 },
-    destination: "Armazém Central, São Paulo-SP",
-    destinationCoordinates: { lat: -23.5505, lng: -46.6333 },
-    startTime: "2025-09-12T08:00:00",
-    endTime: "2025-09-12T10:09:00",
-    vehicleType: "truck_dry",
-    vehiclePlate: "ABC1D23",
-    driverName: "João Silva",
-    temperatureControl: null,
-    humidityControl: null,
-    distance: 138,
-    transportConditions: "Transporte hermético, sem umidade, protegido de luz solar direta.",
-    incidents: "Sem incidentes registrados. Viagem concluída com sucesso e dentro do prazo."
+  // 1. Mapa de legendas ATUALIZADO para o inglês.
+  const vehicleTypeLabels = {
+    truck_refrigerated: "Refrigerated Truck",
+    truck_dry: "Dry Truck",
+    van: "Van",
+    container_ship: "Container Ship",
+    air_cargo: "Air Cargo",
   };
 
-  const data = logisticsMetadata || mockLogisticsData;
-
-  const {
-    trackingId,
-    transportCertifications,
-    origin,
-    originCoordinates,
-    destination,
-    destinationCoordinates,
-    startTime,
-    endTime,
-    vehicleType,
-    vehiclePlate,
-    driverName,
-    temperatureControl,
-    humidityControl,
-    distance,
-    transportConditions,
-    incidents
-  } = data;
-
-  const certificationsLabels = transportCertifications?.map(cert => transportCertifications[cert] || cert).join(', ') || 'Nenhuma';
-  const vehicleTypeLabel = vehicleTypes[vehicleType] || vehicleType;
+  // 2. A lógica para usar o mapa continua a mesma.
+  const vehicleLabel = vehicleTypeLabels[logisticsMetadata.vehicleType] || logisticsMetadata.vehicleType;
 
   return (
-    <div className="container mx-auto px-4 py-16 text-white">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-playfair font-black text-center mb-10 drop-shadow-lg">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200">
-            Logística e Movimentação
-          </span>
-        </h2>
-        
-        {/* Bloco de Rastreamento e Certificações */}
-        <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700 mb-12">
-          <h3 className="text-lg font-bold text-amber-300">Tracking ID</h3>
-          <p className="text-2xl font-mono text-white mt-2 mb-4 break-words">
-            {trackingId || 'N/A'}
+    <section className="relative py-32 px-6 bg-gradient-to-b from-black via-blue-950 to-black">
+      <div className="max-w-7xl mx-auto relative">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-gradient-to-r from-transparent to-blue-600" />
+            <span className="text-blue-600 text-sm font-medium tracking-[0.3em] uppercase">Transportation</span>
+            <div className="h-px w-12 bg-gradient-to-l from-transparent to-blue-600" />
+          </div>
+          <h2 className="text-5xl pb-3 md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-500 mb-4 leading-normal">
+            Logistics & Transport
+          </h2>
+          <p className="text-xl text-stone-400 max-w-2xl mx-auto">
+            Tracking ID: {logisticsMetadata.trackingId}
           </p>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-400 uppercase font-semibold">Certificações de Transporte:</span>
-            <p className="text-sm font-light text-white italic">{certificationsLabels}</p>
-          </div>
         </div>
 
-        {/* Layout de duas colunas para detalhes técnicos e mapa */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          {/* Lado Esquerdo: Detalhes do Envio */}
-          <div className="flex flex-col space-y-8 bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700">
-            <h3 className="text-xl font-bold text-amber-300">Detalhes do Envio</h3>
-            
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-gray-300 text-sm">
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Partida</span>
-                <span className="text-white mt-1">{formatDate(startTime)} às {formatTime(startTime)}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Chegada</span>
-                <span className="text-white mt-1">{formatDate(endTime)} às {formatTime(endTime)}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Origem</span>
-                <span className="text-white mt-1">{origin || 'N/A'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Destino</span>
-                <span className="text-white mt-1">{destination || 'N/A'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Veículo</span>
-                <span className="text-white mt-1">{vehicleTypeLabel || 'N/A'} ({vehiclePlate || 'N/A'})</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Motorista</span>
-                <span className="text-white mt-1">{driverName || 'N/A'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-400 text-xs uppercase font-semibold">Distância</span>
-                <span className="text-white mt-1">{distance ? `${distance} km` : 'N/A'}</span>
-              </div>
-            </div>
-
-            {transportConditions && (
-              <div className="border-t border-gray-700 pt-6">
-                <h4 className="text-md font-semibold text-amber-300 mb-2">Condições do Transporte</h4>
-                <p className="text-sm font-light leading-relaxed italic text-gray-300">
-                  {transportConditions}
-                </p>
-              </div>
-            )}
-            
-            {incidents && (
-              <div className="border-t border-gray-700 pt-6">
-                <h4 className="text-md font-semibold text-amber-300 mb-2">Incidentes / Observações</h4>
-                <p className="text-sm font-light leading-relaxed italic text-gray-300">
-                  {incidents}
-                </p>
-              </div>
+        <div className="grid md:grid-cols-2 gap-12 mb-12">
+          <div className="p-8 bg-blue-950/30 border border-blue-900/30 rounded-2xl">
+            <h3 className="text-2xl font-bold text-blue-100 mb-6 flex items-center gap-2">
+              <MapPin className="w-6 h-6" />
+              Origin
+            </h3>
+            <p className="text-lg text-stone-300 mb-4">{logisticsMetadata.origin}</p>
+            {logisticsMetadata.startTime && (
+              <p className="text-sm text-stone-400">
+                Departure: {new Date(logisticsMetadata.startTime).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+              </p>
             )}
           </div>
 
-          {/* Lado Direito: Mapa do Trajeto */}
-          <div className="bg-gray-800 bg-opacity-50 p-6 rounded-2xl shadow-lg border border-gray-700">
-            <h3 className="text-xl font-bold text-amber-300 mb-4">Rota de Transporte</h3>
-            <LocationMap
-              origin={{ lat: originCoordinates?.lat, lng: originCoordinates?.lng }}
-              destination={{ lat: destinationCoordinates?.lat, lng: destinationCoordinates?.lng }}
-              farmName={origin}
-              address={destination}
-            />
+          <div className="p-8 bg-blue-950/30 border border-blue-900/30 rounded-2xl">
+            <h3 className="text-2xl font-bold text-blue-100 mb-6 flex items-center gap-2">
+              <MapPin className="w-6 h-6" />
+              Destination
+            </h3>
+            <p className="text-lg text-stone-300 mb-4">{logisticsMetadata.destination}</p>
+            {logisticsMetadata.endTime && (
+              <p className="text-sm text-stone-400">
+                Arrival: {new Date(logisticsMetadata.endTime).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+              </p>
+            )}
           </div>
         </div>
+
+        <div className="grid md:grid-cols-4 gap-6">
+          <TransportMetric icon={<Truck />} label="Vehicle" value={vehicleLabel} />
+          <TransportMetric icon={<TrendingUp />} label="Distance" value={`${logisticsMetadata.distance} km`} />
+          <TransportMetric icon={<ThermometerSun />} label="Temperature" value={`${logisticsMetadata.temperatureControl}°C`} />
+          <TransportMetric icon={<Droplets />} label="Humidity" value={`${logisticsMetadata.humidityControl}%`} />
+        </div>
+
+        {logisticsMetadata.transportCertifications && logisticsMetadata.transportCertifications.length > 0 && (
+          <div className="mt-8 flex flex-wrap gap-3 justify-center">
+            {logisticsMetadata.transportCertifications.map((cert) => (
+              <div key={cert} className="px-4 py-2 bg-green-950/30 border border-green-800/30 rounded-full">
+                <span className="text-green-400 text-sm font-medium capitalize">{cert.replace(/_/g, ' ')}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
-}
+};

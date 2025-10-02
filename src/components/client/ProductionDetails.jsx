@@ -1,213 +1,255 @@
 import React from 'react';
+import { MapPin, Coffee, Calendar, Award, Users, Mountain, Star } from 'lucide-react';
 import { LocationMap } from './LocationMap';
-import { Leaf, Mountain, Wheat, Sunset, HandPlatter, Droplets, Medal } from 'lucide-react';
 
-const formatDate = (dateString) => {
-  if (!dateString) return 'Not available';
-  const date = new Date(dateString);
-  // Using 'en-US' locale for consistent English formatting
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-};
+const DetailCard = ({ icon, title, value, highlight, large }) => (
+  <div className={`p-6 rounded-xl border transition-all duration-300 ${
+    highlight 
+      ? 'bg-gradient-to-br from-amber-500/10 to-amber-900/20 border-amber-500/30 shadow-lg' 
+      : 'bg-white/5 border-white/10 hover:border-amber-500/20'
+  } ${large ? 'col-span-2' : ''}`}>
+    <div className="flex items-start gap-4">
+      <div className={`p-3 rounded-lg ${
+        highlight ? 'bg-amber-500/20' : 'bg-white/10'
+      }`}>
+        {React.cloneElement(icon, { 
+          className: `w-6 h-6 ${highlight ? 'text-amber-400' : 'text-amber-200/70'}` 
+        })}
+      </div>
+      <div className="flex-1">
+        <div className="text-sm text-amber-200/60 uppercase tracking-wider mb-2 font-light">{title}</div>
+        <div className={`text-lg font-medium ${highlight ? 'text-amber-100' : 'text-white'} leading-relaxed`}>
+          {value}
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
-// Mapeamentos para labels em inglês
-const processingMethodLabels = {
-  natural: "Natural Process",
-  washed: "Washed Process",
-  honey: "Honey Process",
-  'semi-washed': "Semi-Washed Process",
-  anaerobic: "Anaerobic Fermentation",
-  carbonic_maceration: "Carbonic Maceration"
-};
+const StatCard = ({ icon, value, label, subtitle }) => (
+  <div className="bg-gradient-to-br from-amber-900/20 to-amber-950/30 border border-amber-500/20 rounded-xl p-6 backdrop-blur-sm">
+    <div className="flex items-center gap-3 mb-3">
+      <div className="p-2 bg-amber-500/20 rounded-lg">
+        {React.cloneElement(icon, { className: 'w-5 h-5 text-amber-400' })}
+      </div>
+      <div className="text-amber-200/60 text-sm font-light uppercase tracking-wider">{label}</div>
+    </div>
+    <div className="text-3xl font-bold text-amber-100 mb-1">{value}</div>
+    {subtitle && <div className="text-amber-200/40 text-sm">{subtitle}</div>}
+  </div>
+);
 
-const harvestMethodLabels = {
-  manual: "Manual (Stripping)",
-  selective: "Selective Picking",
-  mechanical: "Mechanical Harvesting"
-};
+export const ProductionDetails = ({ producerMetadata }) => {
+  if (!producerMetadata) return null;
 
-const certificationDisplay = {
-  organic: { label: "Organic Certified", icon: Leaf },
-  fair_trade: { label: "Fair Trade", icon: HandPlatter },
-  rainforest: { label: "Rainforest Alliance", icon: Droplets }, // Using droplets for nature
-  utz: { label: "UTZ Certified", icon: Medal },
-  bird_friendly: { label: "Bird Friendly", icon: Leaf } // Reusing leaf for nature/bird
-};
-
-export function ProductionDetails({ producerMetadata }) {
-  // Mock data para desenvolvimento, ajustada para storytelling e inglês
-  const mockProducerData = {
-    farmName: "Fazenda Ouro Negro",
-    address: "BR-265, Km 230, São Sebastião da Grama-SP, Brazil",
-    coordinates: {
-      lat: -21.8015,
-      lng: -46.7912
-    },
-    altitude: 1250, // meters
-    variety: "Bourbon Amarelo",
-    cropYear: "2024/25",
-    harvestDate: "2024-05-15T00:00:00.000Z",
-    producerStory: "Nestled in the heart of São Sebastião da Grama, Fazenda Ouro Negro is a third-generation family farm, renowned for its unwavering passion for cultivating exceptional specialty coffees. Our tradition, rich in heritage, blends seamlessly with innovative, sustainable practices, crafting beans of unparalleled flavor. We are deeply committed to respecting the environment and nurturing our local community, ensuring every cup tells a story of care, quality, and legacy.",
-    harvestMethod: "selective", // "selective" -> Selective Picking
-    processingMethod: "natural", // "natural" -> Natural Process
-    qualityScore: 89.5,
-    certifications: ["fair_trade", "organic"]
+  // Extrai coordenadas do metadata
+  const getCoordinates = () => {
+    if (!producerMetadata.coordinates) return null;
+    
+    const lat = parseFloat(producerMetadata.coordinates.lat);
+    const lng = parseFloat(producerMetadata.coordinates.lng || producerMetadata.coordinates.lon);
+    
+    if (isNaN(lat) || isNaN(lng)) return null;
+    
+    return { lat, lng };
   };
 
-  const data = producerMetadata || mockProducerData;
-
-  const {
-    farmName,
-    address,
-    coordinates,
-    altitude,
-    variety,
-    cropYear,
-    harvestDate,
-    producerStory,
-    harvestMethod,
-    processingMethod,
-    qualityScore,
-    certifications,
-  } = data;
+  const coordinates = getCoordinates();
+  const hasMap = coordinates !== null;
 
   return (
-    <div className="container mx-auto px-4 py-16 text-white">
-      <div className="max-w-6xl mx-auto">
-        {/* Título da Seção com gradiente Deluxe */}
-        <h2 className="text-3xl sm:text-4xl font-playfair font-black text-center mb-10 drop-shadow-lg">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200">
-            The Origin Story
-          </span>
-        </h2>
-        
-        {/* Bloco principal de storytelling: Farm, Altitude, Variety, Harvest */}
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 md:p-12 rounded-3xl shadow-2xl border border-gray-700 mb-16 relative overflow-hidden">
-          {/* Fundo sutil de montanha/folha */}
-          <div className="absolute inset-0 opacity-10 blur-sm">
-            <img src="https://images.unsplash.com/photo-1517596825368-232973166b2e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Coffee farm background" className="w-full h-full object-cover" />
-          </div>
+    <section className="relative py-24 px-6 bg-gradient-to-br from-amber-950 via-stone-900 to-black min-h-screen">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h80v80H0V0zm20 20v40h40V20H20zm20 35a15 15 0 1 1 0-30 15 15 0 0 1 0 30z' fill='%23f59e0b' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          backgroundSize: '120px 120px'
+        }} />
+      </div>
 
-          <div className="relative z-10 text-center">
-            <h3 className="text-4xl font-playfair font-bold text-amber-300 drop-shadow-md mb-4 leading-tight">
-              From the Lush Hills of {farmName || 'Our Farm'}
-            </h3>
-            <p className="text-lg font-light text-gray-300 leading-relaxed max-w-3xl mx-auto mb-8">
-              Every bean in this batch began its journey at the esteemed <strong className="text-white">{farmName || 'a distinguished farm'}</strong>, nestled in the picturesque {address || 'an undisclosed location'} in Brazil.
-              It was cultivated at a remarkable altitude of <strong className="text-white">{altitude ? `${altitude} meters` : 'unknown altitude'}</strong>, where the unique microclimate nurtures the <strong className="text-white">{variety || 'a fine variety'}</strong> coffee trees.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-8 text-left max-w-4xl mx-auto mt-10">
-              {/* Card: Altitude */}
-              <div className="bg-gray-800 bg-opacity-70 p-5 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-4">
-                <Mountain className="h-8 w-8 text-amber-400 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-gray-400">Altitude</p>
-                  <p className="text-xl font-semibold text-white">{altitude ? `${altitude} m` : 'N/A'}</p>
-                </div>
-              </div>
-              {/* Card: Variety */}
-              <div className="bg-gray-800 bg-opacity-70 p-5 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-4">
-                <Wheat className="h-8 w-8 text-amber-400 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-gray-400">Variety</p>
-                  <p className="text-xl font-semibold text-white">{variety || 'N/A'}</p>
-                </div>
-              </div>
-              {/* Card: Harvest Date */}
-              <div className="bg-gray-800 bg-opacity-70 p-5 rounded-xl shadow-lg border border-gray-700 flex items-center space-x-4">
-                <Sunset className="h-8 w-8 text-amber-400 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-gray-400">Harvested</p>
-                  <p className="text-xl font-semibold text-white">{formatDate(harvestDate)}</p>
-                </div>
-              </div>
-            </div>
+      <div className="max-w-7xl mx-auto relative">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-4 mb-8">
+            <div className="h-px w-20 bg-gradient-to-r from-transparent to-amber-500/50" />
+            <span className="text-amber-500/80 text-sm font-light tracking-[0.3em] uppercase">ORIGIN STORY</span>
+            <div className="h-px w-20 bg-gradient-to-l from-transparent to-amber-500/50" />
           </div>
+          <h1 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 mb-6 font-serif">
+            {producerMetadata.farmName}
+          </h1>
+          <p className="text-xl text-amber-200/70 max-w-3xl mx-auto leading-relaxed font-light">
+            Where exceptional coffee begins its journey, nurtured in the highlands of {producerMetadata.farmName}
+          </p>
         </div>
 
-        {/* Seção da Experiência do Produtor & Métodos */}
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch mb-16">
-          {/* História do Produtor - Coluna da Esquerda */}
-          <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700 flex flex-col justify-between">
-            <div>
-              <h3 className="text-2xl font-bold mb-4 text-amber-300">The Producer's Legacy</h3>
-              <p className="text-base font-light leading-relaxed text-gray-300">
-                {producerStory || 'The producer\'s story is currently unavailable.'}
+        {/* Main Content Grid */}
+        <div className="grid xl:grid-cols-3 gap-8 mb-12">
+          {/* Left Column - Story & Stats */}
+          <div className="xl:col-span-2 space-y-8">
+            {/* Story Section */}
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-amber-500 rounded-full"></div>
+                <h2 className="text-2xl font-bold text-amber-100 font-serif">The Legacy</h2>
+              </div>
+              <p className="text-lg text-amber-200/80 leading-relaxed font-light">
+                {producerMetadata.producerStory || "For generations, this family-owned estate has been dedicated to the art of coffee cultivation. Each bean tells a story of tradition, passion, and uncompromising quality, nurtured in the rich soils of Brazil's most prestigious coffee-growing regions."}
               </p>
+              
+              {producerMetadata.shadeConsortium && (
+                <div className="mt-6 p-4 bg-green-900/20 border border-green-700/30 rounded-xl">
+                  <p className="text-green-300 text-sm leading-relaxed">🌳 {producerMetadata.shadeConsortium}</p>
+                </div>
+              )}
             </div>
-            {certifications && certifications.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-gray-700">
-                <h4 className="text-lg font-bold text-amber-300 mb-3">Certifications:</h4>
-                <div className="flex flex-wrap gap-4">
-                  {certifications.map((cert, i) => {
-                    const certDisplay = certificationDisplay[cert];
-                    if (!certDisplay) return null; // Handle unknown certifications
-                    const Icon = certDisplay.icon;
-                    return (
-                      <span key={i} className="flex items-center bg-gray-700 text-gray-200 px-4 py-2 rounded-full text-sm font-medium shadow-md">
-                        <Icon className="h-4 w-4 mr-2 text-amber-400" /> {certDisplay.label}
+
+            {/* Stats Grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <StatCard 
+                icon={<Mountain />}
+                value={`${producerMetadata.altitude || 'N/A'}m`}
+                label="Altitude"
+                subtitle="Above sea level"
+              />
+              <StatCard 
+                icon={<Star />}
+                value={producerMetadata.qualityScore || 'N/A'}
+                label="Quality Score"
+                subtitle="Specialty grade"
+              />
+              <StatCard 
+                icon={<Coffee />}
+                value={producerMetadata.variety || 'Arabica'}
+                label="Variety"
+                subtitle="Coffee species"
+              />
+              <StatCard 
+                icon={<Award />}
+                value={producerMetadata.processingMethod || 'Natural'}
+                label="Processing"
+                subtitle="Traditional method"
+              />
+            </div>
+
+            {/* Certifications */}
+            {producerMetadata.certifications && producerMetadata.certifications.length > 0 && (
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+                <h3 className="text-lg font-semibold text-amber-100 mb-4 font-serif">Certifications & Standards</h3>
+                <div className="flex flex-wrap gap-3">
+                  {producerMetadata.certifications.map((cert) => (
+                    <div key={cert} className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                      <span className="text-amber-300 text-sm font-medium capitalize">
+                        {cert.replace('_', ' ')}
                       </span>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Métodos de Colheita e Processamento - Coluna da Direita */}
-          <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700 flex flex-col justify-between">
-            <div>
-              <h3 className="text-2xl font-bold text-amber-300 mb-4">Crafted with Care</h3>
-              <p className="text-base text-gray-300 mb-6">
-                This coffee is a testament to meticulous cultivation and traditional methods.
-              </p>
-              
-              <div className="space-y-6">
-                {/* Método de Colheita */}
-                <div className="flex items-center space-x-4 p-4 bg-gray-900 rounded-lg shadow-md border border-gray-700">
-                  <HandPlatter className="h-8 w-8 text-amber-400 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-400 uppercase font-semibold">Harvest Method</p>
-                    <p className="text-xl font-semibold text-white">{harvestMethodLabels[harvestMethod] || harvestMethod || 'Not specified'}</p>
-                  </div>
-                </div>
-                {/* Método de Processamento */}
-                <div className="flex items-center space-x-4 p-4 bg-gray-900 rounded-lg shadow-md border border-gray-700">
-                  <Droplets className="h-8 w-8 text-amber-400 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-400 uppercase font-semibold">Processing Method</p>
-                    <p className="text-xl font-semibold text-white">{processingMethodLabels[processingMethod] || processingMethod || 'Not specified'}</p>
-                  </div>
-                </div>
+          {/* Right Column - Map & Essential Details */}
+          <div className="space-y-8">
+            {/* Map Section */}
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+              <div className="p-6 border-b border-white/10">
+                <h3 className="text-xl font-bold text-amber-100 flex items-center gap-3 font-serif">
+                  <MapPin className="w-5 h-5 text-amber-400" />
+                  Geographic Origin
+                </h3>
               </div>
-
-              {qualityScore && (
-                <div className="mt-8 text-center bg-gray-900 p-6 rounded-lg shadow-md border border-gray-700">
-                  <p className="text-sm text-gray-400 uppercase font-semibold">Quality Score</p>
-                  <p className="text-5xl font-playfair font-black text-amber-400 mt-2">{qualityScore.toFixed(1)} <span className="text-gray-500 text-3xl">/ 100</span></p>
-                  <p className="text-xs text-gray-500 mt-2">SCA Protocol Evaluation</p>
+              
+              {hasMap ? (
+                <>
+                  <div className="p-2">
+                    <LocationMap 
+                      lat={coordinates.lat}
+                      lng={coordinates.lng}
+                      farmName={producerMetadata.farmName}
+                      address={producerMetadata.address}
+                    />
+                  </div>
+                  <div className="p-4 bg-amber-500/5 border-t border-white/10">
+                    <p className="text-amber-300 text-sm text-center font-light">
+                      📍 {producerMetadata.address}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="p-12 text-center">
+                  <MapPin className="w-16 h-16 text-amber-500/30 mx-auto mb-4" />
+                  <p className="text-amber-200/60 text-lg font-light">Location data not available</p>
+                  <p className="text-amber-200/40 text-sm mt-2">
+                    Geographic coordinates required for map display
+                  </p>
                 </div>
               )}
+            </div>
+
+            {/* Essential Details */}
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-amber-100 mb-4 font-serif">Production Details</h3>
+              <div className="grid gap-4">
+                <DetailCard 
+                  icon={<Calendar />} 
+                  title="Harvest Season" 
+                  value={
+                    producerMetadata.harvestDate 
+                      ? new Date(producerMetadata.harvestDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                      : 'Seasonal harvest'
+                  } 
+                />
+                <DetailCard 
+                  icon={<Users />} 
+                  title="Harvest Method" 
+                  value={producerMetadata.harvestMethod || 'Traditional hand-picking'} 
+                />
+                <DetailCard 
+                  icon={<Award />} 
+                  title="Processing Technique" 
+                  value={producerMetadata.processingMethod || 'Natural sun-dried'} 
+                  highlight 
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Seção do Mapa (em seu próprio card, para melhor visibilidade e contexto) */}
-        <div className="bg-gray-800 bg-opacity-50 p-8 rounded-2xl shadow-lg border border-gray-700">
-          <h3 className="text-2xl font-bold text-amber-300 drop-shadow-md mb-6 text-center">
-            Where It All Began
-          </h3>
-          <LocationMap
-            lat={coordinates?.lat}
-            lng={coordinates?.lng}
-            farmName={farmName}
-            address={address}
-          />
-          <p className="text-sm text-gray-500 text-center mt-6">
-            Explore the precise location of {farmName} where these exceptional beans were grown.
-          </p>
-        </div>
+        {/* Additional Geographic Information */}
+        {hasMap && (
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-8 bg-amber-500 rounded-full"></div>
+              <h3 className="text-2xl font-bold text-amber-100 font-serif">Geographic Profile</h3>
+            </div>
+            <div className="grid md:grid-cols-4 gap-6 text-center">
+              <div>
+                <div className="text-amber-200/60 text-sm font-light uppercase tracking-wider mb-2">Latitude</div>
+                <div className="text-amber-100 text-lg font-mono">{coordinates.lat.toFixed(6)}</div>
+              </div>
+              <div>
+                <div className="text-amber-200/60 text-sm font-light uppercase tracking-wider mb-2">Longitude</div>
+                <div className="text-amber-100 text-lg font-mono">{coordinates.lng.toFixed(6)}</div>
+              </div>
+              <div>
+                <div className="text-amber-200/60 text-sm font-light uppercase tracking-wider mb-2">Region</div>
+                <div className="text-amber-100 text-lg">
+                  {producerMetadata.address?.split(',')?.[1]?.trim() || 'São Paulo'}
+                </div>
+              </div>
+              <div>
+                <div className="text-amber-200/60 text-sm font-light uppercase tracking-wider mb-2">Terroir</div>
+                <div className="text-amber-100 text-lg">Highland</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
-}
+};

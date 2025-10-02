@@ -1,53 +1,107 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, ShieldCheck, ArrowUpRight } from 'lucide-react';
 
-export function BatchHero({ producerName, onchainId }) {
+/**
+ * A refined, "Old Money" style Hero component for displaying a coffee batch.
+ * @param {string} producerName - The name of the coffee producer or estate.
+ * @param {string} onchainId - The human-readable, off-chain ID for the batch (e.g., "FSN-2025-001").
+ * @param {string} batchAddress - The on-chain Solana public key of the batch account. REQUIRED for the verification link.
+ */
+export const BatchHero = ({ producerName, onchainId, batchAddress }) => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Default values for a polished look even if props are missing
+  const displayName = producerName || "A Prestigious Estate";
+  const displayOnchainId = onchainId || "Unavailable";
+  const solanaExplorerLink = batchAddress ? `https://solscan.io/account/${batchAddress}?cluster=devnet` : null;
+
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4 py-16">
-      {/* Background with a subtle, luxurious glow */}
-      <div className="absolute inset-0 bg-black">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-black opacity-95"></div>
-        {/* Subtle, elegant grain or texture overlay */}
-        <div className="absolute inset-0 bg-repeat opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.75\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100\' height=\'100\' filter=\'url(%23noiseFilter)\' opacity=\'0.1\'/%3E%3C/svg%3E")', backgroundSize: '200px' }}></div>
-      </div>
+    <>
+      {/* Importing the serif font directly in the component for ease of use */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;700&display=swap');
+        
+        .font-serif-display {
+          font-family: 'Cormorant Garamond', serif;
+        }
 
-      <div className="relative container mx-auto p-6 sm:p-12 text-center z-10">
-        <div className="bg-white bg-opacity-5 backdrop-filter backdrop-blur-3xl rounded-3xl p-8 sm:p-16 border border-white border-opacity-20 shadow-2xl transition-all duration-500 hover:shadow-3xl transform hover:scale-105">
-          
-          {/* Header and sub-header */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-playfair font-black tracking-tight leading-relaxed md:leading-snug mb-4 drop-shadow-2xl animate-slide-in">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-stone-200 to-gray-400">
-              The Journey of Your Coffee
-            </span>
-          </h1>
+        @keyframes subtle-fade-in {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-subtle-fade-in {
+          animation: subtle-fade-in 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
 
-          <p className="text-lg sm:text-xl font-lato font-light tracking-wide italic mt-6 mb-2 drop-shadow-lg animate-fade-in">
-            A meticulously crafted batch, brought to you by
-          </p>
+        .animation-delay-200 { animation-delay: 200ms; }
+        .animation-delay-400 { animation-delay: 400ms; }
+        .animation-delay-600 { animation-delay: 600ms; }
+      `}</style>
+      
+      <div className="relative h-screen bg-[#100f0d] text-stone-200 overflow-hidden">
+        {/* Subtle textured background with a parallax effect */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]" 
+          style={{
+            backgroundImage: 'linear-gradient(#d4a574 1px, transparent 1px), linear-gradient(to right, #d4a574 1px, transparent 1px)',
+            backgroundSize: '3rem 3rem',
+            transform: `translateY(${scrollY * 0.2}px)`
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
-          <p className="text-xl sm:text-3xl font-lato font-extrabold tracking-widest uppercase text-amber-100 drop-shadow-2xl animate-fade-in-up-delay">
-            {producerName}
-          </p>
+        <div className="relative h-full flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-4xl w-full">
+            
+            <div className="animate-subtle-fade-in">
+              <p className="text-sm uppercase tracking-[0.3em] text-amber-400/60 font-medium">
+                A Mark of Distinction
+              </p>
+              <div className="w-24 h-px bg-amber-400/30 mx-auto mt-4 mb-8"></div>
+            </div>
 
-          {/* Call-to-action button */}
-          <a
-            href={`#batch-details-${onchainId}`}
-            className="mt-12 inline-block px-10 py-4 text-base sm:text-lg font-bold uppercase tracking-widest text-black bg-amber-400 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 hover:bg-amber-300 focus:outline-none focus:ring-4 focus:ring-amber-500 focus:ring-opacity-50 drop-shadow-lg animate-fade-in-down-delay"
-            aria-label="Explore the details of this coffee batch"
-          >
-            Explore Batch Details
-          </a>
-
-          {/* Batch ID and details */}
-          <div className="mt-12 pt-6 border-t border-white border-opacity-10">
-            <p className="text-xs sm:text-sm font-light italic tracking-wider text-gray-400 drop-shadow-md animate-fade-in-down">
-              Batch ID:
-              <span className="font-mono font-medium ml-2 text-white">
-                {onchainId || 'Unavailable'}
-              </span>
+            <h1 className="font-serif-display text-6xl md:text-8xl font-medium text-stone-100 leading-none animate-subtle-fade-in animation-delay-200">
+              {displayName}
+            </h1>
+            
+            <p className="max-w-2xl mx-auto mt-8 text-lg md:text-xl text-stone-300/80 font-light leading-relaxed animate-subtle-fade-in animation-delay-400">
+              A journey of excellence, from soil to cup. Each step of this microlot has been 
+              meticulously documented to ensure its unparalleled provenance and quality.
             </p>
+
+            {/* --- Certificate of Authenticity Plaque --- */}
+            <div className="inline-block mt-12 border border-stone-700/80 p-4 animate-subtle-fade-in animation-delay-600">
+              <div className="flex items-center gap-4">
+                <ShieldCheck className="w-6 h-6 text-amber-400/50 flex-shrink-0" />
+                <div className="text-left">
+                  <p className="text-xs text-stone-400 tracking-widest">PROOF OF PROVENANCE</p>
+                  <p className="font-mono text-base text-stone-200 mt-1">{displayOnchainId}</p>
+                  {solanaExplorerLink && (
+                     <a 
+                        href={solanaExplorerLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-2 text-amber-400/70 hover:text-amber-300 transition-colors duration-300 mt-2"
+                     >
+                        <span className="text-sm font-sans group-hover:underline">Verify on Solana</span>
+                        <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-px group-hover:translate-x-px" />
+                     </a>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
+
+        
         </div>
       </div>
-    </div>
+    </>
   );
-}
+};
