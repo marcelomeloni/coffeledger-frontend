@@ -1,6 +1,7 @@
 // src/api/authService.js
 import { apiClient } from './apiClient';
-
+import { API_BASE_URL } from '../lib/constants';
+import { handleResponse } from '../lib/utils';
 /**
  * Serviço para autenticação e autorização
  */
@@ -75,4 +76,12 @@ export const authService = {
 };
 
 // Exportação direta para compatibilidade com código existente
-export const checkRole = authService.checkRole;
+export const checkRole = async (publicKey) => {
+  // Agora a API retorna mais informações, não só o role.
+  const response = await fetch(`${API_BASE_URL}/api/auth/check-role`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ publicKey }),
+  });
+  return handleResponse(response); // Retorna a resposta completa
+};

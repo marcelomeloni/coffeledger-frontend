@@ -14,7 +14,7 @@ import PartnersListPage from './pages/partners';
 import WorkstationPage from './pages/workstation';
 import HistoryPage from './pages/history';
 import BatchPage from './pages/BatchPage'; // Página Pública
-import RegistryPage from './pages/registry'; // <-- NOVA IMPORTAÇÃO
+import PartnerProfile from './pages/PartnerProfile'; // <-- NOVA IMPORTAÇÃO
 
 // Componente inteligente para decidir qual "página inicial" mostrar
 function HomePage() {
@@ -71,7 +71,7 @@ export default function App() {
                                     
                                     {/* Rotas de Parceiro */}
                                     <Route path="/history" element={<HistoryPage />} />
-                                    <Route path="/registry" element={<RegistryPage />} /> {/* <-- NOVA ROTA */}
+                                    <Route path="/registry" element={<PartnerProfile />} /> {/* <-- NOVA ROTA */}
                                 </Routes>
                             </Layout>
                         </ProtectedRoute>

@@ -1,9 +1,10 @@
-// src/components/features/batch/DynamicStageForm.jsx
-import { useState } from 'react';
+// src/components/features/batch/DynamicStageForm.jsx (VERSÃO COMPLETA ATUALIZADA)
+import { useState, useEffect } from 'react';
 import { addStageToBatch } from '../../../api/batchService';
 import { Button } from '../../common/Button';
 import { Card } from '../../common/Card';
 import { useAuth } from '../../../contexts/AuthContext';
+import { usePartnerData } from '../../../hooks/usePartnerData';
 import { STAGE_FORM_SCHEMAS } from '../../../constants/stageFormSchemas';
 import toast from 'react-hot-toast';
 
@@ -11,10 +12,63 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { publicKey } = useAuth();
+  const { publicKey, partnerId } = useAuth();
+
+  // Buscar dados do parceiro (incluindo metadata)
+  const { metadata: partnerMetadata, isLoading: isPartnerDataLoading } = usePartnerData(partnerId);
 
   // Get schema based on partner type
   const formSchema = STAGE_FORM_SCHEMAS[partnerType];
+
+  // 🆕 Preencher automaticamente com dados do parceiro - AGORA SUPORTA ESTRUTURA COMPLEXA
+  useEffect(() => {
+    if (partnerMetadata && !isPartnerDataLoading && formSchema) {
+      console.log('📦 Metadados do parceiro carregados:', partnerMetadata);
+      
+      const autoFillData = {};
+      
+      // Mapear campos do schema para preenchimento automático
+      formSchema.fields.forEach(field => {
+        if (field.autoFill) {
+          // 🆕 Suporte para caminhos aninhados (ex: 'coordinates.lat')
+          const value = getNestedValue(partnerMetadata, field.autoFill);
+          if (value !== undefined && value !== null) {
+            autoFillData[field.name] = value;
+            console.log(`✅ Preenchendo ${field.name} com:`, value);
+          }
+        }
+
+        // 🆕 Suporte para grupos com campos aninhados
+        if (field.type === 'group' && field.fields) {
+          field.fields.forEach(nestedField => {
+            if (nestedField.autoFill) {
+              const nestedValue = getNestedValue(partnerMetadata, nestedField.autoFill);
+              if (nestedValue !== undefined && nestedValue !== null) {
+                // Inicializa o grupo se não existir
+                if (!autoFillData[field.name]) {
+                  autoFillData[field.name] = {};
+                }
+                autoFillData[field.name][nestedField.name] = nestedValue;
+                console.log(`✅ Preenchendo ${field.name}.${nestedField.name} com:`, nestedValue);
+              }
+            }
+          });
+        }
+      });
+
+      if (Object.keys(autoFillData).length > 0) {
+        setFormData(prev => ({ ...prev, ...autoFillData }));
+        toast.success('Dados do parceiro carregados automaticamente!');
+      }
+    }
+  }, [partnerMetadata, isPartnerDataLoading, formSchema]);
+
+  // 🆕 Função auxiliar para acessar valores aninhados no objeto
+  const getNestedValue = (obj, path) => {
+    return path.split('.').reduce((current, key) => {
+      return current && current[key] !== undefined ? current[key] : undefined;
+    }, obj);
+  };
 
   const handleInputChange = (fieldName, value) => {
     setFormData(prev => ({
@@ -23,7 +77,6 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
     }));
   };
 
-  // New function for handling nested field changes (like coordinates)
   const handleNestedInputChange = (parentField, nestedFieldName, value) => {
     setFormData(prev => ({
       ...prev,
@@ -34,6 +87,16 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
     }));
   };
 
+  // 🆕 Função para formatar coordenadas para exibição
+  const formatCoordinates = (coords) => {
+    if (!coords) return '';
+    if (typeof coords === 'string') return coords;
+    if (coords.lat && coords.lng) {
+      return `${coords.lat}, ${coords.lng}`;
+    }
+    return JSON.stringify(coords);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -41,12 +104,11 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
       return toast.error("Você precisa estar conectado.");
     }
 
-    // Validate required fields
+    // Validar campos obrigatórios
     const missingFields = formSchema.fields.filter(field => {
       if (!field.required) return false;
       
       if (field.type === 'group') {
-        // For group fields, check if all required nested fields are filled
         return field.fields.some(nestedField => 
           nestedField.required && !formData[field.name]?.[nestedField.name]
         );
@@ -67,15 +129,29 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
     submissionData.append('partnerType', partnerType);
     submissionData.append('userKey', publicKey.toBase58());
     
+    // 🆕 Incluir metadata completo do parceiro no envio
+    if (partnerMetadata) {
+      submissionData.append('partnerMetadata', JSON.stringify(partnerMetadata));
+    }
+    
     // Add all form fields as JSON
-    submissionData.append('formData', JSON.stringify(formData));
+    submissionData.append('formData', JSON.stringify({
+      ...formData,
+      // 🆕 Incluir metadados relevantes diretamente no formData para fácil acesso
+      _partnerMetadata: {
+        farmName: partnerMetadata?.farmName,
+        address: partnerMetadata?.address,
+        certifications: partnerMetadata?.certifications,
+        altitude: partnerMetadata?.altitude
+      }
+    }));
     
     if (file) {
       submissionData.append('attachment', file);
     }
 
     try {
-        await addStageToBatch(batchId, submissionData);
+      await addStageToBatch(batchId, submissionData);
       toast.success('Etapa registrada com sucesso!');
       setFormData({});
       setFile(null);
@@ -145,6 +221,9 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
                   <label htmlFor={nestedField.name} className="block text-xs font-medium text-gray-600">
                     {nestedField.label}
                     {nestedField.required && <span className="text-red-500 ml-1">*</span>}
+                    {nestedField.autoFill && partnerMetadata && (
+                      <span className="text-green-500 ml-2 text-xs">(Auto)</span>
+                    )}
                   </label>
                   <input
                     type={nestedField.type}
@@ -162,13 +241,15 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
         );
 
       case 'multiselect':
+        // 🆕 Tratamento especial para certificações
+        const currentValue = formData[field.name] || [];
         return (
           <div>
             <select 
               {...commonProps}
               multiple
               className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 h-32"
-              value={formData[field.name] || []}
+              value={currentValue}
               onChange={(e) => {
                 const selected = Array.from(e.target.selectedOptions, option => option.value);
                 handleInputChange(field.name, selected);
@@ -182,6 +263,29 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
               ))}
             </select>
             <p className="text-xs text-gray-500 mt-1">Mantenha Ctrl pressionado para selecionar múltiplas opções</p>
+            {currentValue.length > 0 && (
+              <p className="text-xs text-green-600 mt-1">
+                Selecionadas: {currentValue.length} certificação(ões)
+              </p>
+            )}
+          </div>
+        );
+      
+      case 'coordinates':
+        // 🆕 Campo especial para coordenadas
+        return (
+          <div>
+            <input 
+              type="text" 
+              {...commonProps}
+              value={formatCoordinates(formData[field.name])}
+              placeholder="Latitude, Longitude ou objeto JSON"
+            />
+            {partnerMetadata?.coordinates && (
+              <p className="text-xs text-gray-500 mt-1">
+                Coordenadas da fazenda: {formatCoordinates(partnerMetadata.coordinates)}
+              </p>
+            )}
           </div>
         );
       
@@ -220,15 +324,38 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
       
       <form onSubmit={handleSubmit}>
         <Card.Content className="space-y-6">
+          {/* 🆕 Indicador de dados carregados automaticamente */}
+          {partnerMetadata && (
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+              <div className="flex items-start">
+                <span className="text-blue-500 mr-2 mt-0.5">✅</span>
+                <div>
+                  <span className="text-sm font-medium text-blue-700">
+                    Dados da Fazenda Santa Maria carregados automaticamente
+                  </span>
+                  <div className="text-xs text-blue-600 mt-1">
+                    {partnerMetadata.farmName} • {partnerMetadata.altitude}m • {partnerMetadata.certifications?.length || 0} certificações
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {formSchema.fields.map(field => (
             <div key={field.name}>
               {field.type !== 'group' && (
                 <label htmlFor={field.name} className="block text-sm font-medium text-gray-700 mb-1">
                   {field.label}
                   {field.required && <span className="text-red-500 ml-1">*</span>}
+                  {field.autoFill && partnerMetadata && getNestedValue(partnerMetadata, field.autoFill) && (
+                    <span className="text-green-500 ml-2 text-xs">(Preenchido automaticamente)</span>
+                  )}
                 </label>
               )}
               {renderField(field)}
+              {field.description && field.type !== 'group' && (
+                <p className="text-xs text-gray-500 mt-1">{field.description}</p>
+              )}
             </div>
           ))}
           
@@ -250,15 +377,24 @@ export function DynamicStageForm({ batchId, onStageAdded, partnerType }) {
         </Card.Content>
         
         <Card.Footer className="flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            {formSchema.fields.filter(f => f.required).length} campos obrigatórios
+          <div className="flex flex-col">
+            <div className="text-sm text-gray-500">
+              {formSchema.fields.filter(f => f.required).length} campos obrigatórios
+            </div>
+            {partnerMetadata && (
+              <div className="text-xs text-green-600 mt-1">
+                ✓ Dados do perfil disponíveis
+              </div>
+            )}
           </div>
           <Button 
             type="submit" 
             className="min-w-32" 
-            disabled={loading}
+            disabled={loading || isPartnerDataLoading}
           >
-            {loading ? 'Registrando...' : `Registrar ${formSchema.title}`}
+            {loading ? 'Registrando...' : 
+             isPartnerDataLoading ? 'Carregando...' : 
+             `Registrar ${formSchema.title}`}
           </Button>
         </Card.Footer>
       </form>

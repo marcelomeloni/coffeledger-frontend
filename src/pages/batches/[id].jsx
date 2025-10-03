@@ -19,12 +19,14 @@ import {
   History,
   Shield,
   MapPin,
-  Settings
+  Settings,
+  Users,
+  X
 } from 'lucide-react';
 
 export default function BatchDetailsPage() {
   const { id } = useParams();
-  const { publicKey, userRole } = useAuth();
+  const { publicKey, userRole, partnerId } = useAuth();
 
   // Estados
   const [batchData, setBatchData] = useState(null);
@@ -51,22 +53,33 @@ export default function BatchDetailsPage() {
     fetchData();
   }, [id]);
 
-  // Verificar se é batch owner DESTE LOTE
+  // 🛑 CORREÇÃO: Verificar se é batch owner DESTE LOTE - AGORA CORRETO
   const userAddress = publicKey?.toBase58();
-  const isBatchOwner = batchData?.details?.batch_participants?.some(
+  
+  // Correção 1: Verificar pelo brand_owner_key do lote
+  const isBatchOwnerByKey = userAddress === batchData?.details?.brand_owner_key;
+  
+  // Correção 2: Verificar também na lista de participantes
+  const isBatchOwnerByParticipants = batchData?.details?.batch_participants?.some(
     p => p.partner.public_key === userAddress && p.partner.role === 'batchOwner'
   );
+
+  // 🎯 CORREÇÃO PRINCIPAL: Usar ambas as verificações
+  const isBatchOwner = isBatchOwnerByKey || isBatchOwnerByParticipants;
 
   const isCurrentHolder = userAddress === batchData?.details?.current_holder_key;
   const isFinalized = batchData?.details?.status === 'completed';
 
-  console.log('🔍 PERMISSÕES:', {
+  console.log('🔍 PERMISSÕES CORRIGIDAS:', {
     userRole,
     isBatchOwner,
+    isBatchOwnerByKey,
+    isBatchOwnerByParticipants,
     isCurrentHolder,
     isFinalized,
     userAddress,
-    batchOwner: batchData?.details?.batch_participants?.find(p => p.partner.role === 'batchOwner')?.partner.public_key
+    brandOwnerKey: batchData?.details?.brand_owner_key,
+    batchParticipants: batchData?.details?.batch_participants
   });
 
   // Finalizar lote - APENAS para batch owners
@@ -96,7 +109,7 @@ export default function BatchDetailsPage() {
     }
   };
 
-  // ========== NOVAS FUNÇÕES DE PERMISSÃO ==========
+  // ========== FUNÇÕES DE PERMISSÃO CORRIGIDAS ==========
   
   // Usuário pode ver informações de gestão (apenas batchOwner)
   const canSeeManagement = isBatchOwner;
@@ -112,6 +125,17 @@ export default function BatchDetailsPage() {
   
   // Usuário pode ver informações básicas do lote (todos os usuários)
   const canSeeBatchInfo = true;
+
+  // Função para recarregar dados do lote
+  const refreshBatchData = async () => {
+    try {
+      const data = await getBatchById(id);
+      setBatchData(data);
+    } catch (err) {
+      console.error('❌ Erro ao recarregar dados do lote:', err);
+      toast.error('Erro ao atualizar dados do lote');
+    }
+  };
 
   // Loading e erro
   if (loading) {
@@ -159,11 +183,11 @@ export default function BatchDetailsPage() {
           </div>
         }
       >
-        {/* Botão de gerenciar participantes - APENAS para batch owners */}
+        {/* 🎯 AGORA DEVE APARECER: Botão de gerenciar participantes - APENAS para batch owners */}
         {canSeeManagement && !isFinalized && (
           <Button 
             onClick={() => setAddParticipantsModalOpen(true)}
-            className="bg-white border border-gray-300 hover:bg-gray-50"
+            className="bg-green-600 text-white hover:bg-green-700"
           >
             <UserPlus className="h-4 w-4 mr-2" />
             Gerenciar Participantes
@@ -178,13 +202,16 @@ export default function BatchDetailsPage() {
           {/* Coluna Principal */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* ÁREA DE GESTÃO - APENAS BATCH OWNER */}
+            {/* 🎯 AGORA DEVE APARECER: ÁREA DE GESTÃO - APENAS BATCH OWNER */}
             {canSeeManagement && (
               <Card className="border border-gray-200">
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <Settings className="h-6 w-6 text-blue-600" />
                     <h2 className="text-xl font-bold text-gray-900">Gestão do Lote</h2>
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                      👑 Batch Owner
+                    </span>
                   </div>
                   
                   <div className="space-y-4">
@@ -206,6 +233,83 @@ export default function BatchDetailsPage() {
                         {isFinalized ? 'Finalizado' : 'Ativo'}
                       </span>
                     </div>
+
+                    {/* 🎯 AGORA DEVE APARECER: Card de Participantes - Versão Simplificada */}
+                    <div className="border-t pt-4 mt-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                          <Users className="h-4 w-4 text-green-600" />
+                          Participantes do Lote
+                        </h3>
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                          {batchData.details.batch_participants?.length || 0} participantes
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {batchData.details.batch_participants?.map((participant) => (
+                          <div 
+                            key={participant.id}
+                            className={`flex items-center justify-between p-3 rounded-md border ${
+                              participant.partner.public_key === batchData.details.current_holder_key
+                                ? 'bg-blue-50 border-blue-200'
+                                : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-2 h-2 rounded-full ${
+                                participant.partner.public_key === batchData.details.current_holder_key
+                                  ? 'bg-blue-500'
+                                  : 'bg-gray-400'
+                              }`} />
+                              <div>
+                                <p className="font-medium text-sm text-gray-900">
+                                  {participant.partner.name}
+                                  {participant.partner.role === 'batchOwner' && (
+                                    <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5 rounded">👑 Dono</span>
+                                  )}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {participant.partner.role}
+                                  {participant.partner.public_key === batchData.details.current_holder_key && (
+                                    <span className="ml-2 text-blue-600 font-medium">• Detentor Atual</span>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            {participant.partner.public_key !== batchData.details.current_holder_key && participant.partner.role !== 'batchOwner' && (
+                              <button
+                                onClick={() => {
+                                  if (window.confirm(`Remover ${participant.partner.name} do lote?`)) {
+                                    // Aqui você implementaria a remoção
+                                    toast.error('Funcionalidade de remoção em desenvolvimento');
+                                  }
+                                }}
+                                className="text-gray-400 hover:text-red-500 transition-colors"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        
+                        {(!batchData.details.batch_participants || batchData.details.batch_participants.length === 0) && (
+                          <div className="text-center py-4 text-gray-500">
+                            <Users className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                            <p>Nenhum participante adicionado</p>
+                            <Button 
+                              onClick={() => setAddParticipantsModalOpen(true)}
+                              size="sm"
+                              className="mt-2"
+                            >
+                              <UserPlus className="h-3 w-3 mr-1" />
+                              Adicionar Primeiro Participante
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -225,10 +329,7 @@ export default function BatchDetailsPage() {
 
                   <DynamicStageForm 
                     batchId={id} 
-                    onStageAdded={async () => {
-                      const data = await getBatchById(id);
-                      setBatchData(data);
-                    }} 
+                    onStageAdded={refreshBatchData} 
                     partnerType={userRole}
                   />
 
@@ -236,10 +337,7 @@ export default function BatchDetailsPage() {
                     <TransferCustodyForm 
                       batch={batchData} 
                       currentHolderKey={userAddress}
-                      onTransferSuccess={async () => {
-                        const data = await getBatchById(id);
-                        setBatchData(data);
-                      }} 
+                      onTransferSuccess={refreshBatchData} 
                     />
                   </div>
                 </div>
@@ -289,7 +387,25 @@ export default function BatchDetailsPage() {
                     <div>
                       <span className="font-medium text-gray-500">Detentor Atual:</span>
                       <p className="text-gray-900">
-                        {isCurrentHolder ? 'Você' : batchData.details.current_holder_key}
+                        {isCurrentHolder ? 'Você' : (
+                          batchData.details.batch_participants?.find(p => 
+                            p.partner.public_key === batchData.details.current_holder_key
+                          )?.partner.name || batchData.details.current_holder_key
+                        )}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <span className="font-medium text-gray-500">Participantes:</span>
+                      <p className="text-gray-900">
+                        {batchData.details.batch_participants?.length || 0} participantes na cadeia
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <span className="font-medium text-gray-500">Dono do Lote:</span>
+                      <p className="text-gray-900">
+                        {batchData.details.batch_participants?.find(p => 
+                          p.partner.role === 'batchOwner'
+                        )?.partner.name || 'Não identificado'}
                       </p>
                     </div>
                   </div>
@@ -317,33 +433,73 @@ export default function BatchDetailsPage() {
               </Card>
             )}
 
-            {/* Participantes - APENAS BATCH OWNER */}
+            {/* 🎯 AGORA DEVE APARECER: Card de Participantes Expandido - APENAS BATCH OWNER */}
             {canSeeParticipants && batchData.details.batch_participants && (
               <ParticipantsCard
                 batchId={batchData.details.id}
                 participants={batchData.details.batch_participants}
                 isOwner={isBatchOwner}
-                onParticipantRemoved={async () => {
-                  const data = await getBatchById(id);
-                  setBatchData(data);
-                }}
+                onParticipantRemoved={refreshBatchData}
                 batchData={batchData}
               />
             )}
+
+            {/* Card de Status da Cadeia - VISÍVEL PARA TODOS */}
+            <Card className="border border-gray-200">
+              <div className="p-4 border-b border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-green-600" />
+                  <h3 className="font-semibold text-gray-900">Cadeia de Custódia</h3>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Total de Participantes:</span>
+                    <span className="font-semibold text-gray-900">
+                      {batchData.details.batch_participants?.length || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Etapas Concluídas:</span>
+                    <span className="font-semibold text-gray-900">
+                      {batchData.stages?.length || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Status:</span>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      isFinalized 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {isFinalized ? 'Finalizado' : 'Ativo'}
+                    </span>
+                  </div>
+                  
+                  {/* Indicador de Próxima Etapa */}
+                  {!isFinalized && batchData.details.current_holder_key && (
+                    <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-200">
+                      <p className="text-xs text-blue-700 font-medium">
+                        Próxima etapa: {batchData.details.batch_participants?.find(p => 
+                          p.partner.public_key === batchData.details.current_holder_key
+                        )?.partner.role || 'Em transição'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
 
-      {/* Modal de Participantes - APENAS para batch owner */}
+      {/* 🎯 AGORA DEVE APARECER: Modal de Adicionar Participantes - APENAS para batch owner */}
       {canSeeParticipants && (
         <AddParticipantsModal
           isOpen={isAddParticipantsModalOpen}
           onClose={() => setAddParticipantsModalOpen(false)}
-          onSuccess={async () => {
-            const data = await getBatchById(id);
-            setBatchData(data);
-            setAddParticipantsModalOpen(false);
-          }}
+          onSuccess={refreshBatchData}
           batchId={id}
           currentParticipantIds={batchData.details.batch_participants?.map(p => p.partner.id) || []}
         />

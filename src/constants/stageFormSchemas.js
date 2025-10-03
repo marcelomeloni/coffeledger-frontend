@@ -1,191 +1,231 @@
 // src/constants/stageFormSchemas.js
 
 export const STAGE_FORM_SCHEMAS = {
-  producer: {
-    title: "🌱 Etapa Produtor",
-    description: "Cadastro das informações da fazenda e produção",
-    icon: "🌱",
-    fields: [
-      {
-        name: "type",
-        label: "Tipo",
-        type: "select",
-        options: [
-          { value: "arabica", label: "Arábica" },
-          { value: "robusta", label: "Robusta" },
-          { value: "liberica", label: "Libérica" },
-          { value: "excelsa", label: "Excelsa" }
-        ]
-      },
-      {
-        name: "plantingDate",
-        label: "Dia da Plantação",
-        type: "date"
-      },
-      {
-        name: "farmName",
-        label: "Nome da Fazenda",
-        type: "text",
-        placeholder: "Ex: Fazenda Santa Maria"
-      },
-      {
-        name: "address",
-        label: "Endereço Completo",
-        type: "text",
-        placeholder: "Ex: Rodovia MG-010, Km 45, Monte Verde-MG"
-      },
-      {
-        name: "coordinates",
-        label: "Coordenadas Geográficas",
-        type: "group",
-        description: "Coordenadas para mapeamento da localização exata",
-        fields: [
-          {
-            name: "lat",
-            label: "Latitude",
-            type: "number",
-            step: "any",
-            placeholder: "Ex: -22.9201"
-          },
-          {
-            name: "lng", 
-            label: "Longitude",
-            type: "number",
-            step: "any",
-            placeholder: "Ex: -46.7652"
-          }
-        ]
-      },
-      {
-        name: "altitude",
-        label: "Altitude (metros acima do nível do mar)",
-        type: "number",
-        placeholder: "Ex: 1200"
-      },
-      {
-        name: "variety",
-        label: "Variedade do Café",
-        type: "select",
-        options: [
-          { value: "arabica", label: "Arábica" },
-          { value: "bourbon", label: "Bourbon" },
-          { value: "catuai", label: "Catuaí" },
-          { value: "mundo_novo", label: "Mundo Novo" },
-          { value: "caturra", label: "Caturra" },
-          { value: "typica", label: "Typica" },
-          { value: "robusta", label: "Robusta" },
-          { value: "catucai_amarelo", label: "Catucaí Amarelo" }
-        ]
-      },
-      {
-        name: "cropYear",
-        label: "Safra/Ano da Colheita",
-        type: "text",
-        placeholder: "Ex: 2025/26"
-      },
-      {
-        name: "harvestDate",
-        label: "Data da Colheita",
-        type: "date"
-      },
-      {
-        name: "cropClimate",
-        label: "Clima na Safra",
-        type: "textarea",
-        placeholder: "Ex: Seca e temperaturas elevadas em fevereiro, seguidas de chuvas irregulares"
-      },
-      {
-        name: "shadeConsortium",
-        label: "Sombra / Consórcio Agrícola",
-        type: "textarea",
-        placeholder: "Ex: Cultivado com árvores nativas e bananeiras para sombreamento"
-      },
-      {
-        name: "producerStory",
-        label: "História da Fazenda / Produtor",
-        type: "textarea",
-        placeholder: "Ex: Fazenda familiar há 3 gerações, dedicada à produção cafeeira desde 1882"
-      },
-      {
-        name: "harvestMethod",
-        label: "Método de Colheita",
-        type: "select",
-        options: [
-          { value: "manual", label: "Manual (Derriça)" },
-          { value: "selective", label: "Seletiva" },
-          { value: "mechanical", label: "Mecanizada" }
-        ]
-      },
-      {
-        name: "processingMethod",
-        label: "Método de Processamento",
-        type: "select",
-        options: [
-          { value: "natural", label: "Natural" },
-          { value: "washed", label: "Lavado" },
-          { value: "honey", label: "Honey" },
-          { value: "semi-washed", label: "Semi-lavado" },
-          { value: "anaerobic", label: "Anaeróbico" },
-          { value: "carbonic_maceration", label: "Maceração Carbônica" }
-        ]
-      },
-      {
-        name: "beanDensity",
-        label: "Densidade do Grão (g/L)",
-        type: "number",
-        placeholder: "Ex: 680"
-      },
-      {
-        name: "moistureContent",
-        label: "Teor de Umidade (%)",
-        type: "number",
-        step: 0.1,
-        placeholder: "Ex: 11.5"
-      },
-      {
-        name: "qualityScore",
-        label: "Nota de Qualidade Inicial (0-100)",
-        type: "number",
-        min: 0,
-        max: 100,
-        placeholder: "Ex: 85"
-      },
-      {
-        name: "certifications",
-        label: "Certificações",
-        type: "multiselect",
-        options: [
-          { value: "organic", label: "Orgânico" },
-          { value: "fair_trade", label: "Fair Trade" },
-          { value: "rainforest", label: "Rainforest Alliance" },
-          { value: "utz", label: "UTZ Certified" },
-          { value: "bird_friendly", label: "Bird Friendly" }
-        ]
-      },
-      {
-        name: "producerNotes",
-        label: "Observações do Produtor",
-        type: "textarea",
-        placeholder: "Condições climáticas, técnicas de cultivo, desafios específicos, características especiais do terreno..."
-      }
-    ]
-  },
+  // src/constants/stageFormSchemas.js - SCHEMA PRODUCER ATUALIZADO
+producer: {
+  title: "🌱 Etapa Produtor",
+  description: "Cadastro das informações da fazenda e produção",
+  icon: "🌱",
+  fields: [
+    
+ 
+    {
+      name: "farmName",
+      label: "Nome da Fazenda",
+      type: "text",
+      required: true,
+      autoFill: 'farmName',
+      placeholder: "Ex: Fazenda Santa Maria"
+    },
+    {
+      name: "address",
+      label: "Endereço Completo",
+      type: "text",
+      required: true,
+      autoFill: 'address',
+      placeholder: "Ex: Rodovia MG-010, Km 45, Monte Verde-MG"
+    },
+    {
+      name: "coordinates",
+      label: "Coordenadas Geográficas",
+      type: "group",
+      description: "Coordenadas para mapeamento da localização exata",
+      required: false,
+      fields: [
+        {
+          name: "lat",
+          label: "Latitude",
+          type: "number",
+          step: "any",
+          autoFill: 'coordinates.lat',
+          placeholder: "Ex: -22.9201"
+        },
+        {
+          name: "lng", 
+          label: "Longitude",
+          type: "number",
+          step: "any",
+          autoFill: 'coordinates.lng',
+          placeholder: "Ex: -46.7652"
+        }
+      ]
+    },
+    {
+      name: "altitude",
+      label: "Altitude (metros acima do nível do mar)",
+      type: "number",
+      required: false,
+      autoFill: 'altitude',
+      placeholder: "Ex: 1200"
+    },
+    {
+      name: "plantingDate",
+      label: "Data do Plantio",
+      type: "date",
+      required: false
+    },
+    {
+      name: "variety",
+      label: "Variedade do Café",
+      type: "select",
+      required: true,
+      options: [
+        { value: "arabica", label: "Arábica" },
+        { value: "bourbon", label: "Bourbon" },
+        { value: "catuai", label: "Catuaí" },
+        { value: "mundo_novo", label: "Mundo Novo" },
+        { value: "caturra", label: "Caturra" },
+        { value: "typica", label: "Typica" },
+        { value: "robusta", label: "Robusta" },
+        { value: "catucai_amarelo", label: "Catucaí Amarelo" }
+      ]
+    },
+    {
+      name: "cropYear",
+      label: "Safra/Ano da Colheita",
+      type: "text",
+      required: true,
+      placeholder: "Ex: 2025/26"
+    },
+    {
+      name: "harvestDate",
+      label: "Data da Colheita",
+      type: "date",
+      required: true
+    },
+    {
+      name: "cropClimate",
+      label: "Condições Climáticas na Safra",
+      type: "textarea",
+      required: false,
+      placeholder: "Ex: Seca e temperaturas elevadas em fevereiro, seguidas de chuvas irregulares"
+    },
+    {
+      name: "shadeConsortium",
+      label: "Sombra / Consórcio Agrícola",
+      type: "textarea",
+      required: false,
+      autoFill: 'shadeConsortium',
+      placeholder: "Ex: Cultivado com árvores nativas e bananeiras para sombreamento"
+    },
+    {
+      name: "producerStory",
+      label: "História da Fazenda / Produtor",
+      type: "textarea",
+       
+      autoFill: "producerStory" ,
+      required: false,
+      placeholder: "Ex: Fazenda familiar há 3 gerações, dedicada à produção cafeeira desde 1882"
+    },
+    {
+      name: "harvestMethod",
+      label: "Método de Colheita",
+      type: "select",
+      required: true,
+      options: [
+        { value: "manual", label: "Manual (Derriça)" },
+        { value: "selective", label: "Seletiva" },
+        { value: "mechanical", label: "Mecanizada" }
+      ]
+    },
+    {
+      name: "processingMethod",
+      label: "Método de Processamento",
+      type: "select",
+      required: true,
+      options: [
+        { value: "natural", label: "Natural" },
+        { value: "washed", label: "Lavado" },
+        { value: "honey", label: "Honey" },
+        { value: "semi-washed", label: "Semi-lavado" },
+        { value: "anaerobic", label: "Anaeróbico" },
+        { value: "carbonic_maceration", label: "Maceração Carbônica" }
+      ]
+    },
+    {
+      name: "beanDensity",
+      label: "Densidade do Grão (g/L)",
+      type: "number",
+      required: false,
+      placeholder: "Ex: 680"
+    },
+    {
+      name: "moistureContent",
+      label: "Teor de Umidade (%)",
+      type: "number",
+      required: false,
+      step: 0.1,
+      placeholder: "Ex: 11.5"
+    },
+    {
+      name: "qualityScore",
+      label: "Nota de Qualidade Inicial (0-100)",
+      type: "number",
+      required: false,
+      min: 0,
+      max: 100,
+      placeholder: "Ex: 85"
+    },
+    {
+      name: "certifications",
+      label: "Certificações",
+      type: "multiselect",
+      required: false,
+      autoFill: 'certifications',
+      options: [
+        { value: "organic", label: "Orgânico" },
+        { value: "fair_trade", label: "Fair Trade" },
+        { value: "rainforest", label: "Rainforest Alliance" },
+        { value: "utz", label: "UTZ Certified" },
+        { value: "bird_friendly", label: "Bird Friendly" },
+        { value: "global_gap", label: "Global G.A.P." },
+        { value: "brasil_sustentavel", label: "Brasil Sustentável" }
+      ]
+    },
+    {
+      name: "producerNotes",
+      label: "Observações do Produtor",
+      type: "textarea",
+      required: false,
+      placeholder: "Condições climáticas, técnicas de cultivo, desafios específicos, características especiais do terreno..."
+    },
+    {
+      name: "estimatedVolume",
+      label: "Volume Produzido (kg)",
+      type: "number",
+      required: true,
+      min: 1,
+      step: 0.1,
+      placeholder: "Ex: 1500.5"
+    },
+    {
+      name: "soilType",
+      label: "Tipo de Solo",
+      type: "select",
+      required: false,
+      options: [
+        { value: "clay", label: "Argiloso" },
+        { value: "sandy", label: "Arenoso" },
+        { value: "clay_sandy", label: "Argilo-Arenoso" },
+        { value: "limestone", label: "Calcário" },
+        { value: "volcanic", label: "Vulcânico" },
+        { value: "laterite", label: "Laterítico" }
+      ]
+    }
+  ]
+},
 
   logistics: {
     title: "🚚 Logística",
     description: "Controle de transporte e movimentação do lote",
     icon: "🚚",
     fields: [
-      {
-        name: "trackingId",
-        label: "Rastreamento (Tracking ID / Blockchain Hash)",
-        type: "text",
-        placeholder: "Ex: TRK-2025-001-BLOCKCHAIN-HASH"
-      },
+   
       {
         name: "transportCertifications",
         label: "Certificações de Transporte",
         type: "multiselect",
+        autoFill: "transportCertifications" ,
         options: [
           { value: "organic_certified", label: "Transporte Orgânico Certificado" },
           { value: "sustainable", label: "Transporte Sustentável" },
@@ -195,6 +235,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "origin",
         label: "Local de Origem", 
+        autoFill: "origin" ,
         type: "text",
         placeholder: "Ex: Fazenda Santa Maria, Monte Verde-MG"
       },
@@ -207,6 +248,7 @@ export const STAGE_FORM_SCHEMAS = {
             name: "lat",
             label: "Latitude",
             type: "number",
+           
             step: "any",
             placeholder: "Ex: -22.9201"
           },
@@ -214,6 +256,7 @@ export const STAGE_FORM_SCHEMAS = {
             name: "lng",
             label: "Longitude",
             type: "number",
+        
             step: "any",
             placeholder: "Ex: -46.7652"
           }
@@ -222,6 +265,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "destination",
         label: "Local de Destino",
+        autoFill: "destination" ,
         type: "text",
         placeholder: "Ex: Armazém Central, São Paulo-SP"
       },
@@ -233,6 +277,7 @@ export const STAGE_FORM_SCHEMAS = {
           {
             name: "lat",
             label: "Latitude",
+        
             type: "number",
             step: "any",
             placeholder: "Ex: -23.5505"
@@ -240,6 +285,7 @@ export const STAGE_FORM_SCHEMAS = {
           {
             name: "lng",
             label: "Longitude",
+      
             type: "number", 
             step: "any",
             placeholder: "Ex: -46.6333"
@@ -259,6 +305,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "vehicleType",
         label: "Tipo de Veículo",
+        autoFill: "vehicleType" ,
         type: "select",
         options: [
           { value: "truck_refrigerated", label: "Caminhão Refrigerado" },
@@ -271,12 +318,14 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "vehiclePlate",
         label: "Placa do Veículo",
+        autoFill: "vehiclePlate" ,
         type: "text",
         placeholder: "Ex: ABC1D23"
       },
       {
         name: "driverName",
         label: "Nome do Motorista",
+        autoFill: "driverName" ,
         type: "text",
         placeholder: "Ex: João Silva"
       },
@@ -321,12 +370,14 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "warehouseName",
         label: "Nome do Armazém",
+        autoFill: "warehouseName" ,
         type: "text",
         placeholder: "Ex: Armazém Central São Paulo"
       },
       {
         name: "location",
         label: "Localização",
+        autoFill: "location" ,
         type: "text", 
         placeholder: "Ex: Av. das Nações, 1000 - Guarulhos, SP"
       },
@@ -338,6 +389,7 @@ export const STAGE_FORM_SCHEMAS = {
           {
             name: "lat",
             label: "Latitude",
+            autoFill: "coordinates.lat" ,
             type: "number",
             step: "any",
             placeholder: "Ex: -23.4255"
@@ -345,6 +397,7 @@ export const STAGE_FORM_SCHEMAS = {
           {
             name: "lng",
             label: "Longitude", 
+            autoFill: "coordinates.lng" ,
             type: "number",
             step: "any",
             placeholder: "Ex: -46.4784"
@@ -354,6 +407,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "storageCapacity",
         label: "Capacidade de Armazenagem (kg/ton)",
+        autoFill: "storageCapacity" ,
         type: "text",
         placeholder: "Ex: 50 toneladas"
       },
@@ -412,11 +466,13 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "inspectionDate",
         label: "Data da Última Inspeção",
+        autoFill: "inspectionDate" ,
         type: "date"
       },
       {
         name: "pestControl",
         label: "Controle de Pragas",
+        autoFill: "pestControl" ,
         type: "select",
         options: [
           { value: "none", label: "Nenhum" },
@@ -441,6 +497,7 @@ export const STAGE_FORM_SCHEMAS = {
     fields: [
       {
         name: "evaluatorName",
+        autoFill: "evaluatorName" ,
         label: "Nome do Classificador",
         type: "text",
         placeholder: "Ex: Maria Santos - Q-Grader"
@@ -594,6 +651,7 @@ export const STAGE_FORM_SCHEMAS = {
     fields: [
       {
         name: "roasteryName",
+        autoFill: "roasteryName" ,
         label: "Nome da Torrefação",
         type: "text",
         placeholder: "Ex: Torrefação Arte & Sabor"
@@ -606,6 +664,7 @@ export const STAGE_FORM_SCHEMAS = {
           {
             name: "lat",
             label: "Latitude",
+            autoFill: "roasteryLocation.lat" ,
             type: "number", 
             step: "any",
             placeholder: "Ex: -23.5505"
@@ -613,6 +672,7 @@ export const STAGE_FORM_SCHEMAS = {
           {
             name: "lng",
             label: "Longitude",
+            autoFill: "roasteryLocation.lng" ,
             type: "number",
             step: "any", 
             placeholder: "Ex: -46.6333"
@@ -748,10 +808,11 @@ export const STAGE_FORM_SCHEMAS = {
     "description": "Detalhes sobre o acondicionamento do café, garantindo frescor e qualidade até o consumidor final.",
     "icon": "📦",
     "fields": [
-      // Dados da Empresa e Design
+    
       {
         "name": "packagingCompany",
         "label": "Empresa de Embalagem",
+        autoFill: "packagingCompany" ,
         "type": "text",
         "placeholder": "Ex: Embalagens Café Premium Ltda.",
         "required": true
@@ -844,6 +905,7 @@ export const STAGE_FORM_SCHEMAS = {
           "name": "distributorName",
           "label": "Nome da Empresa de Logística/Distribuidora",
           "type": "text",
+          autoFill: "distributorName" ,
           "placeholder": "Ex: Distribuidora Café Brasil Ltda."
         },
         {
@@ -956,6 +1018,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "baristaName",
         label: "Barista or Cafeteria Name",
+        autoFill: "baristaName" ,
         type: "text",
         placeholder: "e.g., Jane Doe at The Daily Grind"
       },
@@ -1032,6 +1095,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "certifications",
         label: "Sustainability Certifications",
+        autoFill: "certifications" ,
         type: "multiselect",
         options: [
           { value: "carbon_neutral", label: "Carbon Neutral" },
@@ -1051,6 +1115,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "waterManagement",
         label: "Water Management",
+        autoFill: "waterManagement" ,
         type: "select",
         placeholder: "Select the primary water practice...",
         options: [
@@ -1063,6 +1128,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
           name: "biodiversityPractices",
           label: "Biodiversity Practices",
+          autoFill: "biodiversityPractices" ,
           type: "multiselect",
           options: [
             { value: "shade_grown", label: "Shade-Grown" },
@@ -1075,6 +1141,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
           name: "renewableEnergyPractices",
           label: "Renewable Energy Usage",
+          autoFill: "renewableEnergyPractices" ,
           type: "multiselect",
           options: [
               { value: "solar_processing", label: "Solar (Processing)" },
@@ -1086,6 +1153,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         name: "socialImpact",
         label: "Social Impact Initiatives",
+        autoFill: "socialImpact" ,
         type: "textarea",
         placeholder: "Describe community projects, fair labor conditions, worker benefits, etc."
       }
@@ -1100,6 +1168,7 @@ export const STAGE_FORM_SCHEMAS = {
       {
         "name": "millingFacilityName",
         "label": "Nome da Unidade de Beneficiamento",
+        autoFill: "millingFacilityName" ,
         "type": "text",
         "required": true,
         "placeholder": "Ex: Beneficiamento Serra Azul"

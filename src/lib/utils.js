@@ -43,4 +43,27 @@ export const formatLabel = (str) => {
       }
   };
   
-  // Você pode adicionar outras funções úteis aqui no futuro.
+/**
+ * Trata as respostas da API de forma padronizada.
+ * @param {Response} response - A resposta da requisição fetch.
+ * @returns {Promise<any>} O objeto JSON da resposta em caso de sucesso.
+ * @throws {Error} Um erro com a mensagem detalhada em caso de falha.
+ */
+export const handleResponse = async (response) => {
+    if (response.ok) {
+      if (response.status === 204) {
+        return null; // Retorna null para requisições "No Content"
+      }
+      return response.json();
+    } else {
+      const errorText = await response.text();
+      let errorMessage;
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.error || errorData.message || errorText;
+      } catch (e) {
+        errorMessage = errorText || `Erro ${response.status}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
+    }
+  };
